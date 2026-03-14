@@ -1,31 +1,29 @@
+import { Box, Github, Mail, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Code2, Brain, Globe } from "lucide-react";
+
 
 const projects = [
   {
-    id: "task-platform",
-    title: "智能任务管理平台",
-    summary: "全栈项目管理工具，支持团队协作与实时同步",
-    icon: Code2,
+    id: "task1",
+    title: "行业投资组合的多因子定价模型分析",
+    summary: "对比不同因子模型在高科技行业与健康医疗行业的拟合度",
     tagColor: "bg-[hsl(var(--tag-blue))] text-[hsl(var(--tag-blue-foreground))]",
-    tags: ["React", "Node.js", "PostgreSQL"],
+    tags: ["因子模型", "动量效应", "回归分析"],
   },
   {
-    id: "ai-analyzer",
-    title: "AI 文本分析工具",
-    summary: "自然语言处理驱动的文本情感分析与摘要系统",
-    icon: Brain,
+    id: "task2",
+    title: "股票波动率分析",
+    summary: "用两种波动率计算方法分析APLD和PSLV的风险特征",
     tagColor: "bg-[hsl(var(--tag-green))] text-[hsl(var(--tag-green-foreground))]",
-    tags: ["Python", "FastAPI", "TensorFlow"],
+    tags: ["Parkinson Volatility", "Close-to-close Volatility"],
   },
   {
-    id: "blog-system",
-    title: "现代化博客系统",
-    summary: "支持 Markdown 与代码高亮的高性能博客平台",
-    icon: Globe,
+    id: "task3",
+    title: "股票指数的GARCH模型对比分析",
+    summary: "用两种GARCH模型分别对纳斯达克和道琼斯指数进行风险特征分析并进行残差自相关性检验",
     tagColor: "bg-[hsl(var(--tag-orange))] text-[hsl(var(--tag-orange-foreground))]",
-    tags: ["Next.js", "TypeScript", "MDX"],
+    tags: ["GARCH", "GJR-GARCH", "非对称效应", "ACF"],
   },
 ];
 
@@ -33,51 +31,40 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Personal Info */}
-      <section className="section-container pt-20 pb-16">
+    <div className="min-h-screen">
+      {/* Personal Info - 深蓝底浅色字 */}
+      <section className="w-full px-6 md:px-8 pt-20 pb-16 bg-[hsl(221,60%,18%)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center"
+          className="text-center text-white"
         >
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl font-bold text-primary">D</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">你好，我是开发者 👋</h1>
-          <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
-            全栈工程师 · 热爱用代码解决问题，专注于构建高质量的 Web 应用
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">项祎程</h1>
+          <p className="text-slate-200 text-lg max-w-lg mx-auto leading-relaxed">
+            运用编程工具通过构建模型对公司及行业进行量化分析
           </p>
-          <div className="flex justify-center gap-3 mt-5 font-mono text-sm text-muted-foreground">
-            <span className="px-3 py-1 rounded-md bg-secondary">React</span>
-            <span className="px-3 py-1 rounded-md bg-secondary">TypeScript</span>
-            <span className="px-3 py-1 rounded-md bg-secondary">Node.js</span>
-            <span className="px-3 py-1 rounded-md bg-secondary">Python</span>
+          <div className="flex justify-center gap-3 mt-5 font-mono text-sm text-slate-300">
+            <span className="px-3 py-1 rounded-md bg-white/10">Python</span>
+            <span className="px-3 py-1 rounded-md bg-white/10">Matlab</span>
+            <span className="px-3 py-1 rounded-md bg-white/10">Cursor</span>
           </div>
         </motion.div>
       </section>
 
-      {/* Divider */}
-      <div className="section-container">
-        <div className="border-t border-border" />
-      </div>
-
-      {/* Project Cards */}
-      <section className="section-container py-16">
+      {/* Project Cards - 浅底深色字 */}
+      <section className="w-full px-6 md:px-8 py-16 bg-background">
         <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="text-xl font-semibold mb-8"
+          className="text-xl font-semibold mb-8 text-foreground"
         >
-          编程成果
+          成果展示
         </motion.h2>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {projects.map((project, i) => {
-            const Icon = project.icon;
-            return (
+          {projects.map((project, i) => (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -87,7 +74,7 @@ const Index = () => {
                 className="group cursor-pointer rounded-xl border border-border bg-card p-6 card-lift"
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Icon size={20} className="text-primary" />
+                  <span className="text-lg font-bold text-primary">{i + 1}</span>
                 </div>
                 <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
                   {project.title}
@@ -103,15 +90,14 @@ const Index = () => {
                   ))}
                 </div>
                 <span className="inline-flex items-center gap-1 text-sm text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  查看详情 <ArrowRight size={14} />
+                  查看详情 < Box  size={14} className="text-blue-500"/>
                 </span>
               </motion.div>
-            );
-          })}
+          ))}
         </div>
       </section>
 
-      <footer className="section-container py-8 border-t border-border">
+      <footer className="w-full px-6 md:px-8 py-8 border-t border-border bg-background">
         <p className="text-center text-sm text-muted-foreground">© 2026 · Built with passion & code</p>
       </footer>
     </div>
