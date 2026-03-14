@@ -143,7 +143,7 @@ const ProjectDetail = () => {
               <h2 className="text-sm font-semibold text-primary mb-3">HiTec 与 Hlth 行业收益分布对比</h2>
               <div className="w-full overflow-hidden rounded-lg border border-primary/20 bg-background">
                 <img
-                  src="/hitech-health-distributions.JPG"
+                  src={`${import.meta.env.BASE_URL}/public/task1/hitech-health-distributions.JPG`}
                   alt="HiTec 与 Hlth 行业组合的经验分布与 KDE 图"
                   className="w-full h-auto"
                 />
@@ -170,7 +170,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">HiTec：单因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/one-hitec.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/one-hitec.JPG`}
                       alt="HiTec 行业组合的单因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -181,7 +181,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">Hlth：单因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/one-hlth.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/one-hlth.JPG`}
                       alt="Hlth 行业组合的单因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -240,7 +240,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">HiTec：三因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/three-hitec.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/three-hitec.JPG`}
                       alt="HiTec 行业组合的三因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -251,7 +251,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">Hlth：三因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/three-hlth.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/three-hlth.JPG`}
                       alt="Hlth 行业组合的三因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -269,7 +269,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">HiTec：四因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/four-hitec.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/four-hitec.JPG`}
                       alt="HiTec 行业组合的四因子回归结果图（含动量因子）"
                       className="w-full h-auto"
                     />
@@ -280,7 +280,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">Hlth：四因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/four-hlth.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/four-hlth.JPG`}
                       alt="Hlth 行业组合的四因子回归结果图（含动量因子）"
                       className="w-full h-auto"
                     />
@@ -298,7 +298,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">HiTec：五因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/five-hitec.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/five-hitec.JPG`}
                       alt="HiTec 行业组合的五因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -309,7 +309,7 @@ const ProjectDetail = () => {
                   <h3 className="text-xs font-semibold text-muted-foreground">Hlth：五因子回归结果</h3>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
-                      src="/task1/five-hitec.JPG"
+                      src={`${import.meta.env.BASE_URL}/public/task1/five-hitec.JPG`}
                       alt="Hlth 行业组合的五因子回归结果图"
                       className="w-full h-auto"
                     />
@@ -452,7 +452,7 @@ const ProjectDetail = () => {
                 <div className="rounded-lg border border-primary/20 bg-background p-4">
                   <h3 className="text-xs font-semibold text-primary mb-3">APLD：CC Volatility vs Parkinson Volatility</h3>
                   <img
-                    src="/task2/vol_compare_apld.JPG"
+                    src={`${import.meta.env.BASE_URL}/public/task2/vol_compare_apld.JPG`}
                     alt="APLD 两种波动率对比图"
                     className="w-full h-auto rounded-md"
                   />
@@ -460,7 +460,7 @@ const ProjectDetail = () => {
                 <div className="rounded-lg border border-primary/20 bg-background p-4">
                   <h3 className="text-xs font-semibold text-primary mb-3">PSLV：CC Volatility vs Parkinson Volatility</h3>
                   <img
-                    src="/task2/vol_compare_pslv.JPG"
+                    src={`${import.meta.env.BASE_URL}/public/task2/vol_compare_pslv.JPG`}
                     alt="PSLV 两种波动率对比图"
                     className="w-full h-auto rounded-md"
                   />
@@ -766,7 +766,7 @@ const ProjectDetail = () => {
                 <h2 className="text-sm font-semibold text-primary mb-4">ACF测试</h2>
                 <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                   <img
-                    src="/task3/acf.JPG"
+                    src={`${import.meta.env.BASE_URL}/public/task3/acf.JPG`}
                     alt="NDX 与 DJI 的 ACF 测试图"
                     className="w-full h-auto"
                   />
