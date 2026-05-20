@@ -1472,7 +1472,7 @@ const ProjectDetail = () => {
             <div className="grid grid-cols-1 gap-6">
               <section className="rounded-xl border border-primary/20 bg-card p-5">
                 <h2 className="text-sm font-semibold text-primary mb-4">对比周度和月度下GBM的模拟路径</h2>
-                <div className="flex flex-col gap-4 items-stretch">
+                <div className="flex flex-col gap-6 items-stretch">
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
                       src={`${task5Base}GBM_Simulated_Price_Paths.png`}
@@ -1480,12 +1480,40 @@ const ProjectDetail = () => {
                       className="w-full h-auto"
                     />
                   </div>
+                  <div className="mt-5 space-y-3 rounded-lg border border-primary/20 bg-background p-4 text-sm text-muted-foreground leading-relaxed">
+                    <p>
+                      四组模拟结果均显示资产价格路径具有明显的不确定性。随着投资期限从当前延伸至三年，价格路径逐渐发散，说明未来价格的不确定性会随时间增加。这一点与金融市场中的风险累积特征一致：持有期越长，资产最终价格可能落入的区间越宽，投资者面临的潜在收益和潜在损失范围也越大。
+                    </p>
+                    <p>
+                      其次，周度模拟相较于月度模拟呈现出更连续、更细致的价格演化过程。由于周度时间步长包含更多观测点，它能够更充分地刻画资产价格在持有期内的波动变化。因此，对于需要关注动态风险管理、阶段性回撤或再平衡策略的投资者而言，周度模拟更有助于识别投资期间的路径风险。相比之下，月度模拟虽然计算点数较少，但相邻时间点之间的跳跃更明显，可能弱化对短期波动的刻画。
+                    </p>
+                    <p>
+                      Euler 方法与 Exact 方法整体上给出了相似的价格扩散趋势，但二者在数值性质上存在差异。Euler 方法是一种近似离散化方法，在时间步长较大时可能引入一定的离散化误差，尤其是在月度模拟下更容易使终端价格分布产生偏差。Exact 方法则直接基于 GBM 的解析解生成价格路径，因此能够更好地保持理论上的对数正态分布特征，并确保价格始终为正。
+                    </p>
+                  </div>
                   <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
                     <img
                       src={`${task5Base}${encodeURIComponent("Histogram of Terminal Prices.png")}`}
                       alt="GBM 模拟终端价格分布直方图"
                       className="w-full h-auto"
                     />
+                  </div>
+                  <div className="mt-5 space-y-3 rounded-lg border border-primary/20 bg-background p-4 text-sm text-muted-foreground leading-relaxed">
+                    <p>
+                      周度模拟与月度模拟的终端价格分布整体形态较为接近，均表现出右偏和长右尾特征。不过，不同时间步长会影响分布的细节。
+                    </p>
+                    <p>
+                      对于 Euler 方法而言，时间步长从周度变为月度后，均值由约 303.88 下降至 297.14，中位数由约 277.00 下降至 272.38。这说明在 Euler 离散化下，较大的时间步长可能引入一定的数值近似误差，从而影响终端价格分布的位置和形态。
+                    </p>
+                    <p>
+                      对于 Exact 方法而言，周度和月度模拟的分布理论上应保持一致，因为 Exact 方法直接基于 GBM 的闭式解进行模拟，时间步长主要影响路径显示精度，而不应显著影响终端价格分布。图中 Exact-Weekly 和 Exact-Monthly 的均值及中位数存在一定差异，可能主要来自有限模拟次数下的随机抽样误差，而非方法本身的系统性偏差。
+                    </p>
+                    <p>
+                      从投资建模角度来看，Euler 方法是一种近似模拟方法，其优势在于实现简单、适用范围广；但在 GBM 模型中，它可能受到离散化误差影响，尤其在时间步长较大时更为明显。因此，Euler 模拟得到的终端价格分布可能与理论分布存在偏离。
+                    </p>
+                    <p>
+                      相比之下，Exact 方法直接利用 GBM 的解析解生成终端价格，能够更准确地保持对数正态分布特征，并确保资产价格始终为正。因此，在使用 GBM 进行投资收益预测、风险分析或衍生品定价时，Exact 方法通常更具理论一致性和数值稳定性。
+                    </p>
                   </div>
                 </div>
               </section>

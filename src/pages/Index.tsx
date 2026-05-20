@@ -54,7 +54,7 @@ const projects: ShowcaseCard[] = [
     title: "期权定价模型对比分析",
     summary: "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
     tagColor: "bg-[hsl(var(--tag-orange))] text-[hsl(var(--tag-orange-foreground))]",
-    tags: ["Black–Scholes模型", "Heston模型"],
+    tags: ["几何布朗运动", "Heston模型","敏感性测试"],
   },
 ];
 
