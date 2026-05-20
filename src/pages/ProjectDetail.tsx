@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
@@ -31,6 +32,397 @@ const projectData: Record<string, ProjectConfig> = {
       "用GARCH(1,1) 和 GJR-GARCH(1,1) 模型分别对纳斯达克 (NDX) 和道琼斯 (DJI) 指数的风险特征进行抓取和比较，并且通过自相关函数检验标准化残差。",
     ],
   },
+  task4: {
+    title: "多种投资组合最优策略",
+    order: 4,
+    description: [
+      "通过对六只股票的历史数据进行定量分析，构建了多种优化策略 ，从而对比出最优投资组合策略",
+    ],
+  },
+  task5: {
+    title: "股票相对价值策略",
+    order: 1,
+    description: ["通过AMZN和MSFT构建相对价值策略，并进行回测分析"],
+  },
+  task6: {
+    title: "期权定价模型对比分析",
+    order: 5,
+    description: [
+      "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
+    ],
+  },
+};
+
+/** task4：原左侧截图中的权重与绩效文本（与 public/task4/*.JPG 一致） */
+const TASK4_PORTFOLIO_TEXT: Record<
+  string,
+  {
+    portfolioTitle: string;
+    weights: { asset: string; weight: string; pct: string }[];
+    metrics: { label: string; value: string }[];
+  }
+> = {
+  mv: {
+    portfolioTitle: "Minimum-Variance Portfolio",
+    weights: [
+      { asset: "AMZN", weight: "0.119681", pct: "11.97 %" },
+      { asset: "CIEN", weight: "0.000000", pct: "0.00 %" },
+      { asset: "LMT", weight: "0.343101", pct: "34.31 %" },
+      { asset: "WMT", weight: "0.310861", pct: "31.09 %" },
+      { asset: "NVDA", weight: "0.000000", pct: "0.00 %" },
+      { asset: "MSFT", weight: "0.226356", pct: "22.64 %" },
+    ],
+    metrics: [
+      { label: "Daily Portfolio Expected Return", value: "0.001109" },
+      { label: "Daily Portfolio Volatility", value: "0.010676" },
+      { label: "Annualized Expected Return", value: "0.279558" },
+      { label: "Annualized Volatility", value: "0.169476" },
+      { label: "Sharpe Ratio (Daily)", value: "0.092761" },
+    ],
+  },
+  mr: {
+    portfolioTitle: "Maximum-Return Portfolio",
+    weights: [
+      { asset: "AMZN", weight: "0.000000", pct: "0.00 %" },
+      { asset: "CIEN", weight: "1.000000", pct: "100.00 %" },
+      { asset: "LMT", weight: "0.000000", pct: "0.00 %" },
+      { asset: "WMT", weight: "0.000000", pct: "0.00 %" },
+      { asset: "NVDA", weight: "0.000000", pct: "0.00 %" },
+      { asset: "MSFT", weight: "0.000000", pct: "0.00 %" },
+    ],
+    metrics: [
+      { label: "Daily Portfolio Expected Return", value: "0.006155" },
+      { label: "Daily Portfolio Volatility", value: "0.039147" },
+      { label: "Annualized Expected Return", value: "1.551056" },
+      { label: "Annualized Volatility", value: "0.621443" },
+      { label: "Sharpe Ratio (Daily)", value: "0.154185" },
+    ],
+  },
+  ms: {
+    portfolioTitle: "Maximum-Sharpe Portfolio",
+    weights: [
+      { asset: "AMZN", weight: "0.000000", pct: "0.00 %" },
+      { asset: "CIEN", weight: "1.000000", pct: "100.00 %" },
+      { asset: "LMT", weight: "0.000000", pct: "0.00 %" },
+      { asset: "WMT", weight: "0.000000", pct: "0.00 %" },
+      { asset: "NVDA", weight: "0.000000", pct: "0.00 %" },
+      { asset: "MSFT", weight: "0.000000", pct: "0.00 %" },
+    ],
+    metrics: [
+      { label: "Daily Portfolio Expected Return", value: "0.006155" },
+      { label: "Daily Portfolio Volatility", value: "0.039147" },
+      { label: "Annualized Expected Return", value: "1.551056" },
+      { label: "Annualized Volatility", value: "0.621443" },
+      { label: "Sharpe Ratio (Daily)", value: "0.154185" },
+    ],
+  },
+  rp: {
+    portfolioTitle: "Risk-parity Portfolio",
+    weights: [
+      { asset: "AMZN", weight: "0.133551", pct: "13.36 %" },
+      { asset: "CIEN", weight: "0.077292", pct: "7.73 %" },
+      { asset: "LMT", weight: "0.255320", pct: "25.53 %" },
+      { asset: "WMT", weight: "0.238000", pct: "23.80 %" },
+      { asset: "NVDA", weight: "0.104976", pct: "10.50 %" },
+      { asset: "MSFT", weight: "0.190861", pct: "19.09 %" },
+    ],
+    metrics: [
+      { label: "Daily Portfolio Expected Return", value: "0.001543" },
+      { label: "Daily Portfolio Volatility", value: "0.012371" },
+      { label: "Annualized Expected Return", value: "0.388796" },
+      { label: "Annualized Volatility", value: "0.196386" },
+      { label: "Sharpe Ratio (Daily)", value: "0.115090" },
+    ],
+  },
+  bl: {
+    portfolioTitle: "Black-Litterman Portfolio",
+    weights: [
+      { asset: "AMZN", weight: "-0.430174", pct: "-43.02 %" },
+      { asset: "CIEN", weight: "0.563834", pct: "56.38 %" },
+      { asset: "LMT", weight: "0.702352", pct: "70.24 %" },
+      { asset: "WMT", weight: "0.273913", pct: "27.39 %" },
+      { asset: "NVDA", weight: "0.046403", pct: "4.64 %" },
+      { asset: "MSFT", weight: "-0.156328", pct: "-15.63 %" },
+    ],
+    metrics: [
+      { label: "Daily Portfolio Expected Return", value: "0.004952" },
+      { label: "Daily Portfolio Volatility", value: "0.025428" },
+      { label: "Annualized Expected Return", value: "1.247820" },
+      { label: "Annualized Volatility", value: "0.403652" },
+      { label: "Sharpe Ratio (Daily)", value: "0.190053" },
+    ],
+  },
+};
+
+const Task4PortfolioTextBlock = ({
+  portfolioTitle,
+  weights,
+  metrics,
+}: {
+  portfolioTitle: string;
+  weights: { asset: string; weight: string; pct: string }[];
+  metrics: { label: string; value: string }[];
+}) => (
+  <div className="font-mono leading-snug text-muted-foreground w-full select-text">
+    <p className="text-foreground font-semibold mb-[0.5em] border-b border-primary/20 pb-[0.35em]">
+      {portfolioTitle}
+    </p>
+    <table className="w-full border-collapse mb-[0.65em]">
+      <thead>
+        <tr className="text-primary/90">
+          <th className="py-[0.12em] pr-[0.5em] text-left font-medium">Asset</th>
+          <th className="py-[0.12em] px-[0.25em] text-right font-medium">Weight</th>
+          <th className="py-[0.12em] pl-[0.25em] text-right font-medium">Weight %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {weights.map((row) => (
+          <tr key={row.asset}>
+            <td className="py-[0.12em] pr-[0.5em]">{row.asset}</td>
+            <td className="py-[0.12em] px-[0.25em] text-right tabular-nums">{row.weight}</td>
+            <td className="py-[0.12em] pl-[0.25em] text-right tabular-nums">{row.pct}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <table className="w-full border-collapse">
+      <thead>
+        <tr className="text-primary/90">
+          <th className="py-[0.12em] pr-[0.5em] text-left font-medium">Metric</th>
+          <th className="py-[0.12em] pl-[0.25em] text-right font-medium">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {metrics.map((row) => (
+          <tr key={row.label}>
+            <td className="py-[0.12em] pr-[0.5em] align-top">{row.label}</td>
+            <td className="py-[0.12em] pl-[0.25em] text-right tabular-nums">{row.value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+/** 以右侧图片高度为基准，动态放大左侧正文字号，使文本块高度与图片等高（扣除左栏内边距） */
+const Task4TextImageRow = ({
+  portfolioTitle,
+  weights,
+  metrics,
+  imageSrc,
+  imageAlt,
+}: {
+  portfolioTitle: string;
+  weights: { asset: string; weight: string; pct: string }[];
+  metrics: { label: string; value: string }[];
+  imageSrc: string;
+  imageAlt: string;
+}) => {
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const textWrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [imgH, setImgH] = useState(0);
+  const [fontPx, setFontPx] = useState(14);
+
+  const measureImg = useCallback(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    const h = img.clientHeight;
+    if (h > 0) setImgH(h);
+  }, []);
+
+  const fitFont = useCallback(() => {
+    const panel = leftPanelRef.current;
+    const wrap = textWrapRef.current;
+    if (!panel || !wrap || imgH < 1) return;
+    const cs = getComputedStyle(panel);
+    const padY = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+    const targetH = panel.clientHeight - padY;
+    if (targetH < 1) return;
+
+    let lo = 6;
+    let hi = 80;
+    for (let i = 0; i < 28; i++) {
+      const mid = (lo + hi) / 2;
+      wrap.style.fontSize = `${mid}px`;
+      if (wrap.scrollHeight <= targetH) lo = mid;
+      else hi = mid;
+    }
+    setFontPx(lo);
+  }, [imgH]);
+
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+    const ro = new ResizeObserver(measureImg);
+    ro.observe(img);
+    img.addEventListener("load", measureImg);
+    measureImg();
+    return () => {
+      ro.disconnect();
+      img.removeEventListener("load", measureImg);
+    };
+  }, [measureImg, imageSrc]);
+
+  useLayoutEffect(() => {
+    const panel = leftPanelRef.current;
+    if (!panel) return;
+    const ro = new ResizeObserver(() => fitFont());
+    ro.observe(panel);
+    fitFont();
+    window.addEventListener("resize", fitFont);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fitFont);
+    };
+  }, [fitFont, imageSrc, imgH]);
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:items-start">
+      <div
+        ref={leftPanelRef}
+        style={imgH > 0 ? { height: imgH } : undefined}
+        className="min-w-0 rounded-lg border border-primary/20 bg-background/80 p-3 flex flex-col justify-end overflow-hidden box-border"
+      >
+        <div ref={textWrapRef} style={{ fontSize: fontPx }} className="w-full min-h-0">
+          <Task4PortfolioTextBlock
+            portfolioTitle={portfolioTitle}
+            weights={weights}
+            metrics={metrics}
+          />
+        </div>
+      </div>
+      <div className="overflow-hidden rounded-lg border border-primary/20 bg-background min-w-0">
+        <img
+          ref={imgRef}
+          src={imageSrc}
+          alt={imageAlt}
+          className="w-full h-auto block"
+        />
+      </div>
+    </div>
+  );
+};
+
+const task4AnalysisClass =
+  "mt-4 space-y-3 text-sm text-muted-foreground leading-relaxed [&_strong]:text-foreground";
+
+const Task4CardAnalysis = ({ file }: { file: string }) => {
+  switch (file) {
+    case "mv":
+      return (
+        <div className={task4AnalysisClass}>
+          <p>
+            <strong>统计特征：</strong>
+            年化收益约28%，年化波动率仅16.95%，是五种策略中波动最低的。日收益分布接近正态，尾部较薄，极端损失概率较小。日Sharpe比率0.093，在风险调整后表现中规中矩。
+          </p>
+          <p>
+            <strong>配置逻辑：</strong>
+            将组合集中在三只相关性较低且各自波动率较小的资产上，利用协方差矩阵的离对角线元素（即资产间低相关性或负相关性）实现波动率的进一步压缩。主要持仓集中在LMT（34.3%）、WMT（31.1%）和MSFT（22.6%）三只防御型或低波动个股，完全排除了高波动的CIEN和NVDA。其中，LMT
+            作为国防股，与科技板块（MSFT、AMZN）在宏观驱动因子上存在天然的低相关性，这正是其获得最高权重的核心原因。
+          </p>
+          <p>
+            <strong>投资建议：</strong>
+            适合风险厌恶型投资者或临近退休的人群。该组合的核心优势是回撤可控，在市场剧烈波动时表现更稳健。不过需要注意，它放弃了高成长标的带来的上行空间，长期可能跑输市场。
+          </p>
+        </div>
+      );
+    case "mr":
+      return (
+        <div className={task4AnalysisClass}>
+          <p>
+            <strong>统计特征：</strong>
+            年化收益高达155%，但代价是62.1%的年化波动率。日收益分布呈明显的右偏和厚尾特征（从直方图可见正向离群值延伸到+25%），与正态拟合偏离较大。日Sharpe
+            0.154，看似不错但暗藏风险。
+          </p>
+          <p>
+            <strong>配置逻辑：</strong>
+            100%集中在CIEN一只股票上。这不是“组合”，而是单一押注——在无约束条件下选择了历史回报最高的资产。
+          </p>
+          <p>
+            <strong>投资建议：</strong>
+            这一策略在实际投资中几乎不可取。零分散化意味着单一公司的利空事件（财报不及预期、行业政策变动等）可能导致灾难性损失。155%的年化收益是历史回溯结果，不代表未来可持续。如果要参考这一结果，它更多说明CIEN在回测期间表现出色，可以作为增加CIEN配置的信号，但绝不应全仓持有。
+          </p>
+        </div>
+      );
+    case "ms":
+      return (
+        <div className={task4AnalysisClass}>
+          <p>
+            <strong>统计特征：</strong>
+            与最大收益组合完全相同——年化收益155%、波动率62.1%、Sharpe 0.154。这说明在这六只股票构成的可行集中，CIEN的风险调整后收益恰好也是最高的。
+          </p>
+          <p>
+            <strong>配置逻辑：</strong>
+            同样100%
+            CIEN。理论上最大Sharpe组合应该比最大收益组合更均衡，但当某只资产的Sharpe比率远超其余资产时，优化结果就会退化为集中持仓。在更丰富的资产池（如包含
+            50+ 只股票或跨资产类别）中，两者通常会给出截然不同的解。当前的一致性更多反映了标的池过小且 CIEN 表现极端突出的特殊情况。
+          </p>
+          <p>
+            <strong>投资建议：</strong>
+            同最大收益组合的问题一样，缺乏分散化。实际应用中应当加入权重上限约束（例如单一资产不超过30-40%），才能让Sharpe优化发挥真正价值。这一结果更适合作为诊断信号——提示CIEN的历史风险回报比异常突出，值得深入研究其基本面是否支撑。
+          </p>
+        </div>
+      );
+    case "rp":
+      return (
+        <div className={task4AnalysisClass}>
+          <p>
+            <strong>统计特征：</strong>
+            年化收益38.9%，波动率19.6%，Sharpe 0.115。回报和风险都略高于最小方差组合。从直方图看，分布仍较接近正态，但右尾略厚于最小方差组合——这来自
+            CIEN（7.73%）和 NVDA（10.50%）的少量敞口，它们为组合贡献了少许正偏度和尾部收益。相比最小方差组合的 -1.65% 和
+            -2.38%，尾部风险略有增加，但换来了约 11 个百分点的额外年化收益，这一交换对大多数投资者来说是值得的。
+          </p>
+          <p>
+            <strong>配置逻辑：</strong>
+            六只股票全部入选，权重相对均衡：LMT 25.5%、WMT 23.8%、MSFT 19.1%、AMZN 13.4%、NVDA 10.5%、CIEN
+            7.7%。低波动资产获得更高权重，高波动的CIEN和NVDA被压低，使得每只资产对组合总风险的贡献大致相等。
+          </p>
+          <p>
+            <strong>投资建议：</strong>
+            全面分散化降低了单一资产的冲击，同时通过纳入CIEN和NVDA保留了一定的上行弹性。适合追求长期稳健增长、不希望在个别资产上下过大赌注的投资者。再平衡频率（月度或季度）对该策略的表现影响较大，实施时需注意。
+          </p>
+        </div>
+      );
+    case "bl":
+      return (
+        <div className={task4AnalysisClass}>
+          <p>
+            <strong>统计特征：</strong>
+            年化收益125%，波动率40.4%，日Sharpe 0.190——五种策略中风险调整后表现最优。但分布的尾部比风险平价组合更厚，极端波动事件的概率更高。
+          </p>
+          <div className="space-y-2">
+            <p>
+              <strong>配置逻辑：</strong>
+              这是唯一出现做空的组合——AMZN -43%、MSFT -15.6%，同时重仓LMT 70.2%和CIEN
+              56.4%。Black-Litterman模型融合了市场均衡收益和投资者主观观点，做空头寸说明模型认为AMZN和MSFT的预期回报低于均衡水平。此外需要注意的是，该组合的总多头暴露为
+              158.27%（CIEN 56.38% + LMT 70.24% + WMT 27.39% + NVDA
+              4.64%），总空头暴露为 58.65%（AMZN -43.02% + MSFT -15.63%），净暴露约 99.62%，总暴露（Gross
+              Exposure）为 216.92%。这意味着：
+            </p>
+            <ul className="list-none space-y-2 pl-0 sm:pl-1">
+              <li>
+                1）组合实际上使用了约 1.17 倍隐含杠杆（总多头 / 净暴露）
+              </li>
+              <li>
+                2）做空头寸需要保证金（Reg T 下通常为做空市值的 50% 初始保证金 + 25% 维持保证金）
+              </li>
+              <li>
+                3）卖空成本（Borrow Cost）： AMZN 和 MSFT
+                作为大盘股通常属于「一般抵押品（General Collateral）」，借券成本较低（年化
+                0.25-0.50%），但在市场压力期可能大幅上升
+              </li>
+            </ul>
+          </div>
+          <p>
+            <strong>投资建议：</strong>
+            Sharpe最高意味着单位风险的回报最好，但这一策略对普通投资者来说实施难度很大。做空需要保证金账户、承担无限下行风险和借券成本。超过100%的总多头暴露意味着使用了杠杆。此外，Black-Litterman的结果高度依赖输入的主观观点参数——观点稍有偏差，配置可能剧变。适合有量化交易经验、能承受高波动且能管理杠杆头寸的专业投资者。
+          </p>
+        </div>
+      );
+    default:
+      return null;
+  }
 };
 
 const ProjectDetail = () => {
@@ -418,7 +810,7 @@ const ProjectDetail = () => {
             </section>
 
             {/* 汇总：因子有效性 */}
-            <section className="rounded-xl border border-primary/20 bg-card p-5">
+            <section className="mt-6 rounded-xl border border-primary/20 bg-card p-5">
               <h2 className="text-sm font-semibold text-primary mb-4">因子有效性</h2>
               <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
                 <p>
@@ -902,6 +1294,239 @@ const ProjectDetail = () => {
                   <p>
                     通过对比标准GARCH模型与引入非对称效应的GJR-GARCH模型可以发现，两者在残差自相关表现上几乎不存在视觉差异，这进一步证明了单纯通过调整波动率方程的规格（即切换至非对称模型）并不能有效解决NDX和DJI数据的统计失真问题，反映出模型在捕捉复杂动态特征及结构性变化方面的有效性仍有待进一步优化。
                   </p>
+                </div>
+              </section>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // task4：五种优化组合的权重与表现（配图）
+  if (id === "task4") {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="w-full px-6 md:px-10 lg:px-20 pt-10 pb-20">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10"
+          >
+            <ArrowLeft size={16} /> 返回首页
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex flex-col gap-4 mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <span className="text-xl font-bold text-primary">{project.order}</span>
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
+                </div>
+              </div>
+
+              <div className="space-y-2 text-muted-foreground leading-relaxed max-w-3xl">
+                {project.description.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              {(
+                [
+                  {
+                    file: "mv",
+                    pairFile: "h2",
+                    title: "最小方差组合",
+                    altPair: "最小方差组合补充图",
+                  },
+                  {
+                    file: "mr",
+                    pairFile: "h1",
+                    title: "最大收益率组合",
+                    altPair: "最大收益率组合补充图",
+                  },
+                  {
+                    file: "ms",
+                    pairFile: "h3",
+                    title: "最大夏普比率组合",
+                    altPair: "最大夏普比率组合补充图",
+                  },
+                  {
+                    file: "rp",
+                    pairFile: "h4",
+                    title: "风险平价组合",
+                    altPair: "风险平价组合补充图",
+                  },
+                  {
+                    file: "bl",
+                    pairFile: "h5",
+                    title: "Black-Litterman组合",
+                    altPair: "Black-Litterman 组合补充图",
+                  },
+                ] as const
+              ).map(({ file, pairFile, title, altPair }, i) => {
+                const text = TASK4_PORTFOLIO_TEXT[file];
+                return (
+                  <section
+                    key={file}
+                    className={`rounded-xl border border-primary/20 p-5 overflow-hidden ${
+                      i % 2 === 0 ? "bg-primary/5" : "bg-card"
+                    }`}
+                  >
+                    <h2 className="text-sm font-semibold text-primary mb-3">{title}</h2>
+                    <Task4TextImageRow
+                      portfolioTitle={text.portfolioTitle}
+                      weights={text.weights}
+                      metrics={text.metrics}
+                      imageSrc={`${import.meta.env.BASE_URL}/task4/${pairFile}.JPG`}
+                      imageAlt={altPair}
+                    />
+                    <Task4CardAnalysis file={file} />
+                  </section>
+                );
+              })}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // task5：股票相对价值策略（占位，待补充内容）
+  if (id === "task5") {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="w-full px-6 md:px-10 lg:px-20 pt-10 pb-20">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10"
+          >
+            <ArrowLeft size={16} /> 返回首页
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <span className="text-xl font-bold text-primary">{project.order}</span>
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
+                </div>
+              </div>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl">{project.description[0]}</p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // task6：期权定价模型对比分析
+  if (id === "task6") {
+    const task5Base = `${import.meta.env.BASE_URL}task5/`;
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="w-full px-6 md:px-10 lg:px-20 pt-10 pb-20">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10"
+          >
+            <ArrowLeft size={16} /> 返回首页
+          </motion.button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex flex-col gap-4 mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <span className="text-xl font-bold text-primary">{project.order}</span>
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
+                </div>
+              </div>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl">{project.description[0]}</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6">
+              <section className="rounded-xl border border-primary/20 bg-card p-5">
+                <h2 className="text-sm font-semibold text-primary mb-4">对比周度和月度下GBM的模拟路径</h2>
+                <div className="flex flex-col gap-4 items-stretch">
+                  <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                    <img
+                      src={`${task5Base}GBM_Simulated_Price_Paths.png`}
+                      alt="周度与月度 GBM 模拟价格路径对比"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                    <img
+                      src={`${task5Base}${encodeURIComponent("Histogram of Terminal Prices.png")}`}
+                      alt="GBM 模拟终端价格分布直方图"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section className="rounded-xl border border-primary/20 bg-card p-5">
+                <h2 className="text-sm font-semibold text-primary mb-4">
+                  Heston模型下的股票价格及看涨期权路径模拟
+                </h2>
+                <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                  <img
+                    src={`${task5Base}Heston_MonteCarlo_White.png`}
+                    alt="Heston 模型下股票价格与看涨期权蒙特卡洛路径模拟"
+                    className="w-full h-auto"
+                  />
+                </div>
+              </section>
+
+              <section className="rounded-xl border border-primary/20 bg-card p-5">
+                <h2 className="text-sm font-semibold text-primary mb-4">Heston模型的敏感性测试</h2>
+                <div className="flex flex-col gap-4 items-stretch">
+                  <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                    <img
+                      src={`${task5Base}Heston_var.png`}
+                      alt="Heston 模型方差参数敏感性测试"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                    <img
+                      src={`${task5Base}Heston_rho.png`}
+                      alt="Heston 模型相关系数 rho 敏感性测试"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <div className="overflow-hidden rounded-lg border border-primary/20 bg-background">
+                    <img
+                      src={`${task5Base}Heston_kappa.png`}
+                      alt="Heston 模型均值回归速度 kappa 敏感性测试"
+                      className="w-full h-auto"
+                    />
+                  </div>
                 </div>
               </section>
             </div>
