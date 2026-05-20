@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import Task5Strategy from "./Task5Strategy";
 
 type ProjectConfig = {
   title: string;
@@ -1401,39 +1402,10 @@ const ProjectDetail = () => {
     );
   }
 
-  // task5：股票相对价值策略（占位，待补充内容）
+  // task5：股票相对价值策略（AMZN/MSFT Copula）
   if (id === "task5") {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="w-full px-6 md:px-10 lg:px-20 pt-10 pb-20">
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10"
-          >
-            <ArrowLeft size={16} /> 返回首页
-          </motion.button>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary">{project.order}</span>
-                </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
-                </div>
-              </div>
-              <p className="text-muted-foreground leading-relaxed max-w-3xl">{project.description[0]}</p>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      <Task5Strategy order={project.order} description={project.description[0]} />
     );
   }
 

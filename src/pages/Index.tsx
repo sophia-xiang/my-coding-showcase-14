@@ -14,7 +14,7 @@ const strategies: ShowcaseCard[] = [
   {
     id: "task5",
     title: "股票相对价值策略",
-    summary: "分析对比不同期权定价理论",
+    summary: "基于 AMZN 与 MSFT 构建 Copula 相对价值策略，并进行样本外回测与风险分析",
     tagColor: "bg-[hsl(var(--tag-green))] text-[hsl(var(--tag-green-foreground))]",
     tags: ["相对价值策略", "蒙特卡洛模拟", "GJR-GARCH", "DCC-GARCH", "Copula"],
   },
