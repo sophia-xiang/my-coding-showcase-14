@@ -1,6 +1,7 @@
 import { Box } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import AIWorkflow from "@/components/AIWorkflow";
 
 type ShowcaseCard = {
   id: string;
@@ -106,9 +107,14 @@ const Index = () => {
             <span className="px-3 py-1 rounded-md bg-white/10">Python</span>
             <span className="px-3 py-1 rounded-md bg-white/10">Matlab</span>
             <span className="px-3 py-1 rounded-md bg-white/10">Cursor</span>
+            <span className="px-3 py-1 rounded-md bg-white/10">Claude Code</span>
+            <span className="px-3 py-1 rounded-md bg-white/10">Wind</span>
           </div>
         </motion.div>
       </section>
+
+      {/* AI 投研工作流 */}
+      <AIWorkflow />
 
       {/* 策略分析 + 分析结果 */}
       <section className="w-full px-6 md:px-8 py-16 bg-background">
@@ -140,6 +146,9 @@ const Index = () => {
       </section>
 
       <footer className="w-full px-6 md:px-8 py-8 border-t border-border bg-background">
+        <p className="text-center text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-2">
+          本站内容仅为个人研究与技术能力展示，不构成任何投资建议或证券推荐。文中出现的证券代码仅作为量化模型的演示样本。
+        </p>
         <p className="text-center text-sm text-muted-foreground">© 2026 · Built with passion & code</p>
       </footer>
     </div>
