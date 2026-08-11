@@ -2,67 +2,31 @@ import { Box } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AIWorkflow from "@/components/AIWorkflow";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useLang } from "@/i18n/LanguageContext";
+import { CardContent } from "@/i18n/content";
 
-type ShowcaseCard = {
-  id: string;
-  title: string;
-  summary: string;
-  tagColor: string;
-  tags: string[];
+const tagPalettes = [
+  "bg-[hsl(var(--tag-blue))] text-[hsl(var(--tag-blue-foreground))]",
+  "bg-[hsl(var(--tag-green))] text-[hsl(var(--tag-green-foreground))]",
+  "bg-[hsl(var(--tag-orange))] text-[hsl(var(--tag-orange-foreground))]",
+];
+
+/** 卡片配色按 id 固定，切换语言时不跳色 */
+const colorById: Record<string, string> = {
+  task5: tagPalettes[1],
+  task1: tagPalettes[0],
+  task2: tagPalettes[1],
+  task3: tagPalettes[2],
+  task4: tagPalettes[0],
+  task6: tagPalettes[2],
 };
-
-const strategies: ShowcaseCard[] = [
-  {
-    id: "task5",
-    title: "股票相对价值策略",
-    summary: "基于 AMZN 与 MSFT 构建 Copula 相对价值策略，并进行样本外回测与风险分析",
-    tagColor: "bg-[hsl(var(--tag-green))] text-[hsl(var(--tag-green-foreground))]",
-    tags: ["相对价值策略", "蒙特卡洛模拟", "GJR-GARCH", "DCC-GARCH", "Copula"],
-  },
-];
-
-const projects: ShowcaseCard[] = [
-  {
-    id: "task1",
-    title: "行业投资组合的多因子定价模型分析",
-    summary: "对比不同因子模型在高科技行业与健康医疗行业的拟合度",
-    tagColor: "bg-[hsl(var(--tag-blue))] text-[hsl(var(--tag-blue-foreground))]",
-    tags: ["因子模型", "动量效应", "回归分析"],
-  },
-  {
-    id: "task2",
-    title: "股票波动率分析",
-    summary: "用两种波动率计算方法分析APLD和PSLV的风险特征",
-    tagColor: "bg-[hsl(var(--tag-green))] text-[hsl(var(--tag-green-foreground))]",
-    tags: ["Parkinson Volatility", "Close-to-close Volatility"],
-  },
-  {
-    id: "task3",
-    title: "股票指数的GARCH模型对比分析",
-    summary: "用两种GARCH模型分别对纳斯达克和道琼斯指数进行风险特征分析并进行残差自相关性检验",
-    tagColor: "bg-[hsl(var(--tag-orange))] text-[hsl(var(--tag-orange-foreground))]",
-    tags: ["GARCH", "GJR-GARCH", "非对称效应", "ACF"],
-  },
-  {
-    id: "task4",
-    title: "多种投资组合最优策略",
-    summary: "通过对六只股票的历史数据进行定量分析，构建了多种优化策略 ，从而对比出最优投资组合策略",
-    tagColor: "bg-[hsl(var(--tag-blue))] text-[hsl(var(--tag-blue-foreground))]",
-    tags: ["最小方差模型", "最大夏普比率模型", "风险平价模型", "Black-Litterman模型"],
-  },
-  {
-    id: "task6",
-    title: "期权定价模型对比分析",
-    summary: "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
-    tagColor: "bg-[hsl(var(--tag-orange))] text-[hsl(var(--tag-orange-foreground))]",
-    tags: ["几何布朗运动", "Heston模型","敏感性测试"],
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
+  const { t } = useLang();
 
-  const renderCard = (card: ShowcaseCard, index: number, delay: number) => (
+  const renderCard = (card: CardContent, index: number, delay: number) => (
     <motion.div
       key={card.id}
       initial={{ opacity: 0, y: 20 }}
@@ -74,17 +38,24 @@ const Index = () => {
       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
         <span className="text-lg font-bold text-primary">{index + 1}</span>
       </div>
-      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{card.title}</h3>
+      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+        {card.title}
+      </h3>
       <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{card.summary}</p>
       <div className="flex flex-wrap gap-1.5 mb-4">
         {card.tags.map((tag) => (
-          <span key={tag} className={`text-xs font-mono px-2 py-0.5 rounded-md ${card.tagColor}`}>
+          <span
+            key={tag}
+            className={`text-xs font-mono px-2 py-0.5 rounded-md ${
+              colorById[card.id] ?? tagPalettes[0]
+            }`}
+          >
             {tag}
           </span>
         ))}
       </div>
       <span className="inline-flex items-center gap-1 text-sm text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-        查看详情 <Box size={14} className="text-blue-500" />
+        {t.viewDetail} <Box size={14} className="text-blue-500" />
       </span>
     </motion.div>
   );
@@ -92,23 +63,24 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Personal Info - 深蓝底浅色字 */}
-      <section className="w-full px-6 md:px-8 pt-20 pb-16 bg-[hsl(221,60%,18%)]">
+      <section className="relative w-full px-6 md:px-8 pt-20 pb-16 bg-[hsl(221,60%,18%)]">
+        <div className="absolute top-5 right-6 md:right-8">
+          <LanguageToggle />
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center text-white"
         >
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">项祎程</h1>
-          <p className="text-slate-200 text-lg max-w-lg mx-auto leading-relaxed">
-            运用编程工具通过构建模型对公司及行业进行量化分析
-          </p>
-          <div className="flex justify-center gap-3 mt-5 font-mono text-sm text-slate-300">
-            <span className="px-3 py-1 rounded-md bg-white/10">Python</span>
-            <span className="px-3 py-1 rounded-md bg-white/10">Matlab</span>
-            <span className="px-3 py-1 rounded-md bg-white/10">Cursor</span>
-            <span className="px-3 py-1 rounded-md bg-white/10">Claude Code</span>
-            <span className="px-3 py-1 rounded-md bg-white/10">Wind</span>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">{t.name}</h1>
+          <p className="text-slate-200 text-lg max-w-lg mx-auto leading-relaxed">{t.tagline}</p>
+          <div className="flex flex-wrap justify-center gap-3 mt-5 font-mono text-sm text-slate-300">
+            {t.skills.map((s) => (
+              <span key={s} className="px-3 py-1 rounded-md bg-white/10">
+                {s}
+              </span>
+            ))}
           </div>
         </motion.div>
       </section>
@@ -124,11 +96,11 @@ const Index = () => {
           transition={{ delay: 0.15 }}
           className="text-xl font-semibold mb-6 text-foreground"
         >
-          策略分析
+          {t.strategyHeading}
         </motion.h2>
 
         <motion.div className="grid gap-5 md:grid-cols-3 mb-12">
-          {strategies.map((card, i) => renderCard(card, i, 0.2 + i * 0.1))}
+          {t.strategies.map((card, i) => renderCard(card, i, 0.2 + i * 0.1))}
         </motion.div>
 
         <motion.h2
@@ -137,19 +109,19 @@ const Index = () => {
           transition={{ delay: 0.25 }}
           className="text-xl font-semibold mb-8 text-foreground"
         >
-          分析结果
+          {t.analysisHeading}
         </motion.h2>
 
         <div className="grid gap-5 md:grid-cols-3">
-          {projects.map((card, i) => renderCard(card, i, 0.35 + i * 0.1))}
+          {t.projects.map((card, i) => renderCard(card, i, 0.35 + i * 0.1))}
         </div>
       </section>
 
       <footer className="w-full px-6 md:px-8 py-8 border-t border-border bg-background">
         <p className="text-center text-xs text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-2">
-          本站内容仅为个人研究与技术能力展示，不构成任何投资建议或证券推荐。文中出现的证券代码仅作为量化模型的演示样本。
+          {t.disclaimer}
         </p>
-        <p className="text-center text-sm text-muted-foreground">© 2026 · Built with passion & code</p>
+        <p className="text-center text-sm text-muted-foreground">{t.copyright}</p>
       </footer>
     </div>
   );

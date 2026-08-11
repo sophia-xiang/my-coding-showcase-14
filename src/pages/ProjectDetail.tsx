@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Task5Strategy from "./Task5Strategy";
+import { useLang } from "@/i18n/LanguageContext";
 
 type ProjectConfig = {
   title: string;
@@ -1540,4 +1541,25 @@ const ProjectDetail = () => {
   return null;
 };
 
-export default ProjectDetail;
+/**
+ * 详情页正文仍为中文。英文模式下先给一条提示，避免读者被无预告地丢进中文长文。
+ * 待正文完成翻译后，可直接移除本包装。
+ */
+const ProjectDetailWithLangNotice = () => {
+  const { lang, t } = useLang();
+
+  return (
+    <>
+      {lang === "en" && (
+        <div className="w-full px-6 md:px-10 lg:px-20 pt-4">
+          <p className="rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-xs text-muted-foreground">
+            {t.detailOnlyZh}
+          </p>
+        </div>
+      )}
+      <ProjectDetail />
+    </>
+  );
+};
+
+export default ProjectDetailWithLangNotice;

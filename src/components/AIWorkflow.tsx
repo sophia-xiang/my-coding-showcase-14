@@ -1,94 +1,16 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-
-type FlowStep = string | { parallel: string[]; note: string };
-
-type Stage = {
-  id: string;
-  stage: string;
-  question: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  flow?: FlowStep[];
-  flowLabel?: string;
-  tabs?: { name: string; desc: string }[];
-  notes: string[];
-};
-
-const stages: Stage[] = [
-  {
-    id: "premarket",
-    stage: "发现",
-    question: "买什么",
-    title: "盘前报告",
-    summary:
-      "每个交易日开盘前扫描全市场消息面，把分散的新闻映射到产业链分支，输出当日催化剂与候选标的清单。",
-    tags: ["消息面扫描", "催化剂打分", "定时任务", "Wind 核验"],
-    flowLabel: "筛选链条",
-    flow: [
-      "消息面采集",
-      "产业链映射",
-      "受益个股",
-      "基本面与行业地位验证",
-      "利好强度打分",
-      "降序推荐",
-    ],
-    notes: [
-      "只采「上一交易日 15:00 收盘后 → 当前」区间内的消息，越界旧消息一律剔除，避免把隔夜陈料当成新催化剂。",
-      "个股须通过基本面与行业地位验证才进入清单，不以消息热度单一维度排序。",
-    ],
-  },
-  {
-    id: "analyzer",
-    stage: "定价",
-    question: "值多少",
-    title: "财报透析",
-    summary:
-      "自建的 A 股基本面与估值分析平台，七个分析模块覆盖从业绩检验到估值定价的完整链条，输出估值区间而非单一目标价。",
-    tags: ["Python", "akshare", "Wind", "杜邦分解", "三档情景"],
-    tabs: [
-      { name: "业绩检验", desc: "盈利能力指标、业绩自洽性四组对照、现金流含金量验证" },
-      { name: "业绩归因", desc: "ROE 杜邦分解、营收拆解、利润率瀑布" },
-      { name: "验证排雷", desc: "资产端／偿债／治理三维扫描 + 红黄绿仪表盘" },
-      { name: "估值区间", desc: "PE 六维矩阵与三角验证；周期股走 PB 路径" },
-      { name: "盈利预测", desc: "三档情景 EPS + 敏感性分析 + 预期差量化" },
-      { name: "量价印证", desc: "业绩窗口、排雷增强、估值修复、资金流向四场景" },
-      { name: "行业对比", desc: "八维相似度筛选精选同行 + 行业分位定位" },
-    ],
-    notes: [
-      "只输出估值区间与悲观／中性／乐观三档情景，不预测单一目标价；关键假设全部显式化并做敏感性分析。",
-      "排雷阶段红灯一票否决——不允许用其他绿灯加权平均掩盖单点风险。",
-      "周期股与金融股自动识别并切换至 PB 穿越周期路径，规避 PE×EPS 在周期低谷失真。",
-    ],
-  },
-  {
-    id: "tracker",
-    stage: "择时",
-    question: "何时买",
-    title: "StockTracker",
-    summary:
-      "对候选池持续跟踪，从三个相互独立的维度研判入场时机，给出可执行的入场与风控参数。",
-    tags: ["三维打分", "事件驱动", "三重障碍", "自选股持久化"],
-    flowLabel: "研判链条",
-    flow: [
-      { parallel: ["关联事件", "公司公告", "技术面"], note: "三维并行" },
-      "三维综合打分",
-      "入场评级 A／B／C",
-      "入场区间 · 止损位 · 分批目标 · 仓位建议",
-    ],
-    notes: [
-      "选股与择时严格分离——利好本身不构成入场理由，入场信号由技术面与事件独立触发，避免看到消息就追高。",
-      "输出固定包含入场区间、止损位、分批目标、仓位建议与核心风险点；持仓标的强制给出止盈止损。",
-    ],
-  },
-];
+import { useLang } from "@/i18n/LanguageContext";
 
 const violet = "bg-[hsl(258,90%,96%)] text-[hsl(258,70%,45%)]";
 
 const stepIndex = (n: number) => String(n + 1).padStart(2, "0");
 
 const AIWorkflow = () => {
+  const { t, lang } = useLang();
+  const stages = t.stages;
+  const quote = (s: string) => (lang === "zh" ? `「${s}」` : `“${s}”`);
+
   return (
     <section className="w-full px-6 md:px-8 py-16 bg-background border-b border-border">
       <motion.h2
@@ -97,7 +19,7 @@ const AIWorkflow = () => {
         transition={{ delay: 0.1 }}
         className="text-xl font-semibold mb-2 text-foreground"
       >
-        AI 投研工作流
+        {t.workflowTitle}
       </motion.h2>
       <motion.p
         initial={{ opacity: 0 }}
@@ -105,7 +27,7 @@ const AIWorkflow = () => {
         transition={{ delay: 0.12 }}
         className="text-sm text-muted-foreground mb-8 max-w-4xl leading-relaxed [text-wrap:balance]"
       >
-        把投研流程拆成「发现 → 定价 → 择时」三个环节，各自用一套可复用的工具承接，串成一条能每日滚动运行的中长期投资流水线。
+        {t.workflowIntro}
       </motion.p>
 
       {/* 流水线总览 */}
@@ -123,7 +45,7 @@ const AIWorkflow = () => {
                   <span className={`text-xs font-mono px-2 py-0.5 rounded-md ${violet}`}>
                     {s.stage}
                   </span>
-                  <span className="text-xs text-muted-foreground">「{s.question}」</span>
+                  <span className="text-xs text-muted-foreground">{quote(s.question)}</span>
                 </div>
                 <div className="font-semibold text-sm text-foreground">{s.title}</div>
               </div>
@@ -155,12 +77,12 @@ const AIWorkflow = () => {
               </span>
               <h3 className="font-semibold text-lg text-foreground">{s.title}</h3>
               <div className="flex flex-wrap gap-1.5 md:ml-auto">
-                {s.tags.map((t) => (
+                {s.tags.map((tag) => (
                   <span
-                    key={t}
+                    key={tag}
                     className="text-xs font-mono px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground"
                   >
-                    {t}
+                    {tag}
                   </span>
                 ))}
               </div>
@@ -171,20 +93,20 @@ const AIWorkflow = () => {
             {/* 分析模块 */}
             {s.tabs && (
               <div className="mb-5">
-                <div className="text-xs font-semibold text-foreground mb-2.5">七大分析模块</div>
+                <div className="text-xs font-semibold text-foreground mb-2.5">{s.tabsLabel}</div>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {s.tabs.map((t, k) => (
+                  {s.tabs.map((tab, k) => (
                     <div
-                      key={t.name}
+                      key={tab.name}
                       className="rounded-lg border border-border bg-muted/30 px-4 py-3"
                     >
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${violet}`}>
                           {stepIndex(k)}
                         </span>
-                        <span className="text-sm font-semibold text-foreground">{t.name}</span>
+                        <span className="text-sm font-semibold text-foreground">{tab.name}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{tab.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -194,9 +116,7 @@ const AIWorkflow = () => {
             {/* 流程链 */}
             {s.flow && (
               <div className="mb-5">
-                <div className="text-xs font-semibold text-foreground mb-2.5">
-                  {s.flowLabel ?? "分析链条"}
-                </div>
+                <div className="text-xs font-semibold text-foreground mb-2.5">{s.flowLabel}</div>
                 <div className="flex flex-wrap items-stretch gap-x-2 gap-y-2">
                   {s.flow.map((step, k) => (
                     <div key={k} className="flex items-center gap-2">
@@ -239,7 +159,7 @@ const AIWorkflow = () => {
 
             {/* 设计取舍 */}
             <div className="rounded-lg border-l-2 border-[hsl(258,70%,60%)] bg-muted/40 px-4 py-3">
-              <div className="text-xs font-semibold text-foreground mb-1.5">设计取舍</div>
+              <div className="text-xs font-semibold text-foreground mb-1.5">{s.notesLabel}</div>
               <ul className="space-y-1.5">
                 {s.notes.map((n) => (
                   <li key={n} className="text-xs text-muted-foreground leading-relaxed">
