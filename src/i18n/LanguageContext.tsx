@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { content, Lang, SiteContent } from "./content";
+import { detailStrings } from "./detailStrings";
 
 const STORAGE_KEY = "site-lang";
 
@@ -7,6 +8,8 @@ type LanguageContextValue = {
   lang: Lang;
   setLang: (l: Lang) => void;
   t: SiteContent;
+  /** 详情页正文逐句翻译：命中词条则返回英文，否则原样返回中文 */
+  tr: (zh: string) => string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -28,8 +31,13 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   const setLang = (l: Lang) => setLangState(l);
 
+  const tr = (zh: string) => {
+    if (lang === "zh") return zh;
+    return detailStrings[zh.replace(/\s+/g, " ").trim()] ?? zh;
+  };
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t: content[lang] }}>
+    <LanguageContext.Provider value={{ lang, setLang, t: content[lang], tr }}>
       {children}
     </LanguageContext.Provider>
   );

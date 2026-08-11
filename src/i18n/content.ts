@@ -38,7 +38,6 @@ export type SiteContent = {
   projects: CardContent[];
   disclaimer: string;
   copyright: string;
-  detailOnlyZh: string;
 };
 
 const zh: SiteContent = {
@@ -167,7 +166,6 @@ const zh: SiteContent = {
   disclaimer:
     "本站内容仅为个人研究与技术能力展示，不构成任何投资建议或证券推荐。文中出现的证券代码仅作为量化模型的演示样本。",
   copyright: "© 2026 · Built with passion & code",
-  detailOnlyZh: "详细分析内容目前仅提供中文版本。",
 };
 
 const en: SiteContent = {
@@ -323,7 +321,6 @@ const en: SiteContent = {
   disclaimer:
     "All content on this site is for personal research and technical demonstration only. It does not constitute investment advice or a securities recommendation. Any ticker symbols shown serve solely as samples for quantitative modelling.",
   copyright: "© 2026 · Built with passion & code",
-  detailOnlyZh: "Detailed write-ups are currently available in Chinese only.",
 };
 
 export const content: Record<Lang, SiteContent> = { zh, en };

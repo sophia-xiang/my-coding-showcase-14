@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLang } from "@/i18n/LanguageContext";
 
 const strategyBase = `${import.meta.env.BASE_URL}strategy1/`;
 const dashboardUrl = `${strategyBase}AMZN_MSFT_Strategy_Dashboard.html?embed=1`;
@@ -80,6 +81,7 @@ type Task5StrategyProps = {
 
 const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
   const navigate = useNavigate();
+  const { tr } = useLang();
 
   return (
     <motion.div
@@ -100,7 +102,7 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
           onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-sky-600 transition-colors mb-10"
         >
-          <ArrowLeft size={16} /> 返回首页
+          <ArrowLeft size={16} /> {tr("返回首页")}
         </button>
 
         <header className="pb-6 border-b border-slate-200 mb-8">
@@ -110,14 +112,14 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
                 <span className="text-xl font-bold text-sky-600">{order}</span>
               </div>
               <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900 whitespace-nowrap">
-                AMZN/MSFT相对价值策略
+                {tr("AMZN/MSFT相对价值策略")}
               </h1>
             </div>
             <p className="text-sm text-slate-600 w-full leading-relaxed mb-5">
               <span className="block whitespace-nowrap overflow-x-auto pb-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                {description}。建模链路：GJR-GARCH(1,1) 边缘 → DCC 时变相关系数 → Student-t Copula h-function → 条件配对信号；
+                {description}{tr("。建模链路：GJR-GARCH(1,1) 边缘 → DCC 时变相关系数 → Student-t Copula h-function → 条件配对信号；")}
               </span>
-              <span className="block">每 20 个交易日滚动校准。</span>
+              <span className="block">{tr("每 20 个交易日滚动校准。")}</span>
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-6 border border-slate-200 rounded-[10px] overflow-hidden bg-gradient-to-b from-white to-slate-50 shadow-sm w-full">
               {BACKTEST_KPIS.map((kpi, i) => (
@@ -139,7 +141,7 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
 
         <section className="mb-10">
           <div className="mb-6">
-            <h2 className="text-base font-semibold text-slate-900">策略框架与交易规则</h2>
+            <h2 className="text-base font-semibold text-slate-900">{tr("策略框架与交易规则")}</h2>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -149,9 +151,9 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
                 className="rounded-[10px] border border-slate-200 bg-gradient-to-b from-white to-slate-50 px-4 py-3.5"
               >
                 <div className="font-mono text-[9.5px] tracking-wider uppercase text-slate-400 mb-1">
-                  {item.label}
+                  {tr(item.label)}
                 </div>
-                <div className="text-sm font-medium text-slate-800 leading-snug">{item.value}</div>
+                <div className="text-sm font-medium text-slate-800 leading-snug">{tr(item.value)}</div>
               </div>
             ))}
           </div>
@@ -163,16 +165,16 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
                 className="rounded-[10px] border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5"
               >
                 <div className="font-mono text-[10px] text-sky-600 mb-2">{step.id}</div>
-                <h3 className="font-semibold text-slate-900 mb-0.5">{step.title}</h3>
-                <p className="font-mono text-[10px] text-slate-400 uppercase tracking-wide mb-3">{step.subtitle}</p>
-                <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
+                <h3 className="font-semibold text-slate-900 mb-0.5">{tr(step.title)}</h3>
+                <p className="font-mono text-[10px] text-slate-400 uppercase tracking-wide mb-3">{tr(step.subtitle)}</p>
+                <p className="text-sm text-slate-600 leading-relaxed">{tr(step.body)}</p>
               </article>
             ))}
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4">
             <div className="rounded-[10px] border border-slate-200 bg-white p-5">
-              <h3 className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-slate-500 mb-4">信号分区</h3>
+              <h3 className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-slate-500 mb-4">{tr("信号分区")}</h3>
               <div className="space-y-2">
                 {SIGNAL_ZONES.map((z) => (
                   <div
@@ -180,8 +182,8 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
                     className="flex flex-wrap gap-x-4 gap-y-1 py-2 border-b border-dashed border-slate-200 last:border-0 text-sm"
                   >
                     <span className="font-mono text-sky-600 shrink-0">{z.range}</span>
-                    <span className="text-slate-800 font-medium">{z.zone}</span>
-                    <span className="text-slate-500">{z.meaning}</span>
+                    <span className="text-slate-800 font-medium">{tr(z.zone)}</span>
+                    <span className="text-slate-500">{tr(z.meaning)}</span>
                   </div>
                 ))}
               </div>
@@ -189,27 +191,27 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
 
             <div className="rounded-[10px] border border-slate-200 bg-white p-5">
               <h3 className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-slate-500 mb-4">
-                入场条件（须同时满足）
+                {tr("入场条件（须同时满足）")}
               </h3>
               <ul className="space-y-2 text-sm text-slate-600">
                 {ENTRY_RULES.map((rule) => (
                   <li key={rule} className="flex gap-2">
                     <span className="text-sky-600 font-mono">›</span>
-                    {rule}
+                    {tr(rule)}
                   </li>
                 ))}
               </ul>
               <h3 className="font-mono text-[10.5px] tracking-[0.14em] uppercase text-slate-500 mt-6 mb-3">
-                出场规则
+                {tr("出场规则")}
               </h3>
               <div className="space-y-2">
                 {EXIT_RULES.map((e) => (
                   <div key={e.type} className="text-sm border border-slate-100 rounded-lg p-3 bg-slate-50">
                     <span className="inline-block font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-sky-600/10 text-sky-700 mb-1">
-                      {e.type}
+                      {tr(e.type)}
                     </span>
-                    <p className="text-slate-700">{e.rule}</p>
-                    <p className="text-slate-500 text-xs mt-1">{e.action}</p>
+                    <p className="text-slate-700">{tr(e.rule)}</p>
+                    <p className="text-slate-500 text-xs mt-1">{tr(e.action)}</p>
                   </div>
                 ))}
               </div>
@@ -219,7 +221,7 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
         </section>
 
         <section className="mb-10">
-          <h2 className="text-base font-semibold text-slate-900 mb-6">组合表现</h2>
+          <h2 className="text-base font-semibold text-slate-900 mb-6">{tr("组合表现")}</h2>
 
           <div className="mb-10 rounded-[10px] border border-slate-200 bg-white p-5 overflow-hidden">
             <div className="flex flex-wrap justify-between items-baseline gap-2 mb-4">
@@ -230,7 +232,7 @@ const Task5Strategy = ({ order, description }: Task5StrategyProps) => {
             </div>
             <img
               src={`${strategyBase}AMZN_MSFT_Return_and_Drawdown_light.gif`}
-              alt="AMZN / MSFT 策略累计收益与回撤"
+              alt={tr("AMZN / MSFT 策略累计收益与回撤")}
               className="w-full h-auto rounded-lg border border-slate-100"
             />
           </div>
