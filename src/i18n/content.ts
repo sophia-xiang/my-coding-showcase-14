@@ -204,7 +204,7 @@ const en: SiteContent = {
       id: "analyzer",
       stage: "Value",
       question: "What it's worth",
-      title: "Financial Deep-Dive",
+      title: "Financial Analysis",
       summary:
         "A self-built A-share fundamental and valuation platform. Seven modules cover the full chain from earnings verification to pricing, producing a valuation range rather than a single price target.",
       tags: ["Python", "akshare", "Wind", "DuPont Analysis", "Three Scenarios"],

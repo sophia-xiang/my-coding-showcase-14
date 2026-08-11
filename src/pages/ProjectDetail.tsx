@@ -460,7 +460,7 @@ const ProjectDetail = () => {
                 </div>
               </div>
 
-            <p className="w-full text-muted-foreground leading-relaxed">
+            <p className="w-full text-muted-foreground leading-relaxed [text-wrap:pretty]">
               {tr(project.description[0])}
               {tr(project.description[1])}
             </p>
@@ -1023,7 +1023,7 @@ const ProjectDetail = () => {
                   <h1 className="text-2xl md:text-3xl font-bold">{tr(project.title)}</h1>
                 </div>
               </div>
-              <div className="w-full max-w-none space-y-2 text-muted-foreground leading-relaxed">
+              <div className="w-full max-w-none space-y-2 text-muted-foreground leading-relaxed [text-wrap:pretty]">
                 {project.description.map((p, i) => (
                   <p key={i}>{tr(p)}</p>
                 ))}
@@ -1323,7 +1323,7 @@ const ProjectDetail = () => {
                 </div>
               </div>
 
-              <div className="space-y-2 text-muted-foreground leading-relaxed max-w-3xl">
+              <div className="space-y-2 text-muted-foreground leading-relaxed max-w-3xl [text-wrap:balance]">
                 {project.description.map((p, i) => (
                   <p key={i}>{tr(p)}</p>
                 ))}
@@ -1428,7 +1428,7 @@ const ProjectDetail = () => {
                   <h1 className="text-2xl md:text-3xl font-bold">{tr(project.title)}</h1>
                 </div>
               </div>
-              <p className="text-muted-foreground leading-relaxed max-w-3xl">{tr(project.description[0])}</p>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl [text-wrap:balance]">{tr(project.description[0])}</p>
             </div>
 
             <div className="grid grid-cols-1 gap-6">

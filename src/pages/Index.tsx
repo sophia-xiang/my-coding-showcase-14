@@ -41,7 +41,9 @@ const Index = () => {
       <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
         {card.title}
       </h3>
-      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{card.summary}</p>
+      <p className="text-sm text-muted-foreground mb-4 leading-relaxed [text-wrap:pretty]">
+        {card.summary}
+      </p>
       <div className="flex flex-wrap gap-1.5 mb-4">
         {card.tags.map((tag) => (
           <span
