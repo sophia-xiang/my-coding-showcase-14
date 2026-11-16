@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Task5Strategy from "./Task5Strategy";
+import Task7LightGBM from "./Task7LightGBM";
 import { useLang } from "@/i18n/LanguageContext";
 
 type ProjectConfig = {
@@ -51,6 +52,13 @@ const projectData: Record<string, ProjectConfig> = {
     order: 5,
     description: [
       "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
+    ],
+  },
+  task7: {
+    title: "基于 LightGBM 的房贷违约预测",
+    order: 6,
+    description: [
+      "用 Freddie Mac 2015–2023 年发放的 41 万笔房贷数据，训练带单调约束的 LightGBM，在贷款收购时预测其两年内严重违约的概率。模型只用发放时的信息，在 2015–18 年的数据上训练，在 2021–23 年的数据上做一次样本外测试，并与 FICO × LTV 定价网格、Logistic 评分卡和 XGBoost 对比。",
     ],
   },
 };
@@ -1523,6 +1531,17 @@ const ProjectDetail = () => {
           </motion.div>
         </div>
       </div>
+    );
+  }
+
+  // task7：基于 LightGBM 的房贷违约预测（FINA 6492 个人项目）
+  if (id === "task7") {
+    return (
+      <Task7LightGBM
+        order={project.order}
+        title={tr(project.title)}
+        description={tr(project.description[0])}
+      />
     );
   }
 

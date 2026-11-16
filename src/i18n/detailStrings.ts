@@ -385,6 +385,137 @@ export const detailStrings: Record<string, string> = {
   "。建模链路：GJR-GARCH(1,1) 边缘 → DCC 时变相关系数 → Student-t Copula h-function → 条件配对信号；":
     ". Modelling chain: GJR-GARCH(1,1) marginals → DCC time-varying correlation → Student-t copula h-function → conditional pair signal;",
 
+  // ── task7：LightGBM 房贷违约预测 ─────────────────────────────────
+  "基于 LightGBM 的房贷违约预测": "LightGBM for Mortgage Default Prediction",
+  "用 Freddie Mac 2015–2023 年发放的 41 万笔房贷数据，训练带单调约束的 LightGBM，在贷款收购时预测其两年内严重违约的概率。模型只用发放时的信息，在 2015–18 年的数据上训练，在 2021–23 年的数据上做一次样本外测试，并与 FICO × LTV 定价网格、Logistic 评分卡和 XGBoost 对比。":
+    "A monotone-constrained LightGBM model, trained on 410,000 Freddie Mac mortgages originated in 2015–2023, estimates at acquisition the probability that a loan becomes seriously delinquent within two years. Using origination-time data only, it is trained on the 2015–18 vintages, tested once out of time on 2021–23, and benchmarked against a FICO × LTV pricing grid, a logistic scorecard and XGBoost.",
+
+  "样本外 AUC": "Out-of-time AUC",
+  "Logistic 评分卡 0.794": "Logistic scorecard 0.794",
+  "剔除最高风险 10% 可拦截的违约": "Defaults removed by excluding the riskiest 10%",
+  "Logistic 评分卡 41.6%": "Logistic scorecard 41.6%",
+  "风险叠加客群的违约识别率": "Defaults flagged among risk-layered loans",
+  "Logistic 评分卡 75%": "Logistic scorecard 75%",
+  "全量年份训练提速": "Training speed-up on a full vintage",
+  "对比 XGBoost，370 万笔贷款": "vs. XGBoost, 3.7M loans",
+
+  "研究设计": "Research Design",
+  "数据来源": "Data",
+  "Freddie Mac 单户住房贷款数据集（Release 47）":
+    "Freddie Mac Single-Family Loan-Level Dataset (Release 47)",
+  "样本": "Sample",
+  "2015–2023 年发放的 410,630 笔贷款": "410,630 loans originated in 2015–2023",
+  "预测目标": "Target",
+  "首次还款后 24 个月内严重违约（逾期 90 天以上或信用事件终止）":
+    "Serious delinquency within 24 months of first payment (90+ days delinquent or a credit-event termination)",
+  "特征": "Features",
+  "只用贷款发放时的信息，共 24 个（11 个数值型，13 个类别型）":
+    "Origination-time fields only: 24 in total (11 numeric, 13 categorical)",
+  "单调约束": "Monotone constraints",
+  "违约概率随 FICO 下降而不减，随 CLTV、LTV、DTI 上升而不减":
+    "PD never falls as FICO falls, or as CLTV, LTV or DTI rises",
+  "调参与训练": "Tuning and training",
+  "Optuna 搜索 60 组参数，早停，5 个随机种子取平均":
+    "60 Optuna trials, early stopping, predictions averaged over 5 seeds",
+  "发放年份": "Vintages",
+  "贷款数": "Loans",
+  "违约数": "Defaults",
+  "违约率": "Default rate",
+  "训练集": "Train",
+  "验证集": "Validation",
+  "压力测试集": "Stress test",
+  "测试集（只用一次）": "Test (touched once)",
+  "按发放年份切分训练、验证和测试集，测试集只在最后评估一次，模拟模型上线后面对未来贷款的真实情况。":
+    "Train, validation and test sets are split by origination vintage, and the test set is evaluated only once at the end, mimicking how the model would face future loans in production.",
+
+  "违约标签的设定": "Defining the Default Label",
+  "各发放年份的 24 个月违约率，原始标签与主标签对比":
+    "24-month default rate by vintage, raw label vs. main label",
+  "新冠疫情期间的还款宽限（forbearance）会让原始违约标签失真。2019 年发放的贷款中有 4.7% 曾逾期 90 天以上，大多发生在服务商标记为宽限或灾害的月份。":
+    "COVID-era forbearance distorts the raw default label. 4.7% of loans originated in 2019 were ever 90+ days delinquent, mostly in months that servicers flagged as forbearance or disaster-related.",
+  "主标签因此不计入宽限期和灾害月份中的逾期，信用事件终止仍算违约，2019 年的违约率回到 0.55%。如果直接用原始标签训练，测试集 AUC 会从 0.810 降到 0.763。":
+    "The main label therefore ignores delinquency in forbearance and disaster months while still counting credit-event terminations, bringing the 2019 default rate back to 0.55%. Training on the raw label instead cuts test AUC from 0.810 to 0.763.",
+
+  "为什么需要树模型：风险会叠加": "Why Trees: Risk Layering",
+  "按 FICO 与 CLTV 分组的实际违约率热力图，分 DTI 高低两组":
+    "Heatmap of realised default rate by FICO and CLTV, split by DTI",
+  "现有的 FICO × LTV 定价网格和 Logistic 评分卡都是加法结构，每个风险因子的贡献固定，不随其他因子变化。":
+    "The incumbent FICO × LTV pricing grid and logistic scorecard are both additive: each risk factor contributes a fixed amount, regardless of the others.",
+  "但房贷风险会叠加。FICO 700–739、CLTV 90–95 的借款人，DTI 不超过 43 时违约率为 0.88%，超过 43 时升到 2.36%；而在 FICO 780 以上，同样的 DTI 变化几乎没有影响。梯度提升树可以直接从数据中学到这类交互效应。":
+    "Mortgage risk compounds. A borrower with FICO 700–739 and CLTV 90–95 defaults at 0.88% when DTI is 43 or below, but at 2.36% above 43, while the same DTI step barely matters at FICO 780+. Gradient-boosted trees learn such interactions directly from the data.",
+
+  "样本外模型对比（2021–2023 测试集）": "Out-of-Time Model Comparison (2021–2023 Test Set)",
+  "模型": "Model",
+  "相对评分卡的 ΔAUC [95% CI]": "ΔAUC vs. scorecard [95% CI]",
+  "B0 定价网格（FICO × LTV）": "B0 Pricing grid (FICO × LTV)",
+  "B1 Logistic 评分卡": "B1 Logistic scorecard",
+  "B2 Logistic + 高基数类别变量": "B2 Logistic + high-cardinality fields",
+  "M3 LightGBM（单调约束）": "M3 LightGBM-monotone",
+  "测试集共 141,543 笔贷款、1,609 笔违约；置信区间来自 1,000 次配对 bootstrap 重抽样。":
+    "Test set: 141,543 loans and 1,609 defaults. Confidence intervals from 1,000 paired bootstrap resamples.",
+  "M3 在全部 1,000 次 bootstrap 抽样中 AUC 都高于评分卡，而且优势逐年扩大，2021、2022、2023 年分别领先 0.010、0.021、0.026。":
+    "M3 beats the scorecard on AUC in every one of the 1,000 bootstrap draws, and its lead widens each year: +0.010 on the 2021 vintage, +0.021 on 2022 and +0.026 on 2023.",
+  "B2 给评分卡加入了更多变量，表现反而略差，说明提升来自模型的灵活性，而不是更多的信息。":
+    "B2, which gives the scorecard more variables, is slightly worse, so the gain comes from model flexibility rather than from more information.",
+  "测试集精确率–召回率曲线与按十分位的校准图":
+    "Test-set precision–recall curves and calibration by score decile",
+  "左图是测试集的精确率–召回率曲线，M3 在大部分召回区间都位于最上方。右图按评分十分位比较预测和实际违约率，用 2019 年数据做 isotonic 校准后，M3 的实际违约率随分位单调上升，从 0.08% 到 5.1%。":
+    "The left panel shows test-set precision–recall curves, with M3 on top across most of the recall range. The right panel compares predicted and realised default rates by score decile: after isotonic calibration on 2019, M3's realised default rate rises monotonically from 0.08% to 5.1%.",
+  "但所有模型都把 2022–23 年的违约水平低估了约一半（实际 1.38–1.50%，预测均值 0.65–0.68%）。这是加息后违约水平整体上移，不是排序失效，用于计提减值准备（CECL）之前需要按年份重新校准。":
+    "Every model, however, under-predicts 2022–23 defaults by about half (realised 1.38–1.50% against a mean PD of 0.65–0.68%). This is a shift in the level of default under higher rates, not a ranking failure, and it calls for vintage-level recalibration before any use in CECL loss reserving.",
+
+  "经济价值": "Economic Value",
+  "剔除最高风险 10% 的贷款后可拦截的违约占比":
+    "Share of defaults removed by excluding the riskiest 10% of loans",
+  "B0 定价网格": "B0 Pricing grid",
+  "风险叠加客群（FICO < 700、CLTV > 85、DTI > 43）中被排进最高风险 10% 的违约占比":
+    "Risk-layered loans (FICO < 700, CLTV > 85, DTI > 43): share of defaults placed in the riskiest decile",
+  "客群违约率": "Segment default rate",
+  "按训练期 16.7% 的平均损失率计算，每 10 亿美元新收购的贷款可避免的预期损失从 68 万美元升到 75 万美元。GSE 本身的损失率较低，因此价值主要体现在更准确的风险分层和更少的逆向选择，而不是损失金额。":
+    "At the 16.7% mean loss severity of the training period, the expected loss avoided rises from $0.68m to $0.75m per $1bn of acquisitions. GSE losses are low to begin with, so the value lies mainly in sharper risk tiering and less adverse selection rather than in headline loss savings.",
+
+  "模型解释：SHAP 与消融实验": "Model Explanation: SHAP and Ablation",
+  "单调约束 LightGBM 的 SHAP 特征重要性与 FICO、DTI 效应图":
+    "SHAP feature importance and FICO and DTI effects for the monotone LightGBM model",
+  "SHAP 显示，信号主要来自 FICO、借款人数量（单一借款人的风险更高）、利率利差（贷款利率减去同月同期限贷款的中位利率）和 DTI，影响方向都符合经济直觉。":
+    "SHAP attributes most of the signal to FICO, the number of borrowers (single-borrower loans are riskier), the rate spread (note rate minus the median rate of loans with the same month and term) and DTI, each with the economically expected direction.",
+  "消融实验把 M3 相对评分卡的 0.016 AUC 提升拆开，约 0.007 来自非线性主效应，约 0.010 来自变量间的交互；去掉单调约束会损失 0.005；地理变量的贡献在 ±0.001 以内。":
+    "An ablation splits M3's +0.016 AUC over the scorecard into about 0.007 from non-linear main effects and about 0.010 from interactions. Removing the monotone constraints costs 0.005, and geography contributes within ±0.001.",
+
+  "为什么选 LightGBM：全量数据下的训练效率": "Why LightGBM: Training Efficiency at Full Scale",
+  "训练样本": "Training loans",
+  "耗时倍数（XGB / LGBM）": "Time ratio (XGB / LGBM)",
+  "模型大小倍数": "Model size ratio",
+  "10 万": "100k",
+  "370 万（全量年份）": "3.7M (full vintage)",
+  "200 万，ZIP3 one-hot（715 列）": "2.0M, ZIP3 one-hot (715 columns)",
+  "LightGBM 与 XGBoost 在 2021 全量年份上的训练时间、内存与样本外 AUC":
+    "LightGBM vs. XGBoost on the full 2021 vintage: training time, memory and out-of-time AUC",
+  "两者精度相当，选择 LightGBM 的理由在运营层面。在 17.7 万笔的训练集上 XGBoost 反而更快，优势要到生产规模才出现。":
+    "The two libraries are equally accurate, so the case for LightGBM is operational. On the 177k-loan training set XGBoost is actually faster; the advantage appears only at production scale.",
+  "用 2021 年全量 370 万笔贷款各训练 500 轮，LightGBM 快 4.5 倍；把 ZIP3 做 one-hot 编码后快 22.6 倍，因为 LightGBM 的互斥特征捆绑会先把互斥的哑变量合并。两者的样本外 AUC 在每个规模下相差都不到 0.004。":
+    "Trained for 500 rounds on all 3.7 million loans of the 2021 vintage, LightGBM is 4.5 times faster, and 22.6 times faster with one-hot ZIP3, because exclusive feature bundling merges the mutually exclusive dummies first. Out-of-time AUC differs by less than 0.004 at every size.",
+
+  "模型风险与使用建议": "Model Risk and Recommendation",
+  "主要风险": "Key risks",
+  "排序准确但水平偏低。2022 年加息后实际违约率翻倍，模型的预测没有跟着上升，用更新的数据重训也无法修正。":
+    "Level, not ranking. After the 2022 rate shock realised default doubled but the PDs did not move, and retraining on more recent data did not fix it.",
+  "利率外推。2023 年 94.5% 的贷款利率高于训练样本的 99 分位（5.6%），树模型在训练范围之外只能平推，应重点监控同月利率利差。":
+    "Rate extrapolation. 94.5% of 2023 loans carry a note rate above the 99th percentile of the training range (5.6%). Trees extrapolate flat, so the same-month rate spread is the safer signal to monitor.",
+  "公平借贷。ZIP3、MSA 等地理变量可能成为受保护特征的代理，而去掉全部地理变量不影响精度，生产版本应剔除。":
+    "Fair lending. Geography such as ZIP3 or MSA can proxy for protected characteristics, and removing all of it leaves accuracy unchanged, so the production version should exclude it.",
+  "监控与治理（SR 11-7）": "Monitoring and governance (SR 11-7)",
+  "每季度监控评分和关键输入的 PSI，超过 0.25 触发复核。":
+    "Quarterly PSI on the score and key inputs, with a review above 0.25.",
+  "实际与预测违约之比超出 0.8–1.25 区间时，用最新的成熟年份重新校准截距。":
+    "Refit the intercept on the latest seasoned vintages when the ratio of realised to predicted defaults leaves the 0.8–1.25 band.",
+  "评分卡继续作为主模型和备用方案，连续两个成熟年份都支持新模型后再切换。":
+    "The scorecard stays champion and fallback until two consecutive seasoned vintages favour the new model.",
+  "建议把单调约束 LightGBM 作为挑战者模型，与评分卡并行，用于贷款收购的风险分层和担保费定价；在完成按年份校准和宏观情景叠加之前，不用于计提减值准备。":
+    "Deploy the monotone LightGBM model as a challenger alongside the scorecard for acquisition risk tiering and guarantee-fee pricing, but not for loss reserving until it has vintage-level recalibration and a macro overlay.",
+  "下一步可以改用贷款–月度面板，把违约和提前还款作为竞争风险建模，并加入房价和利率路径，把时点 PD 扩展为可用于 CECL 和压力测试的全周期 PD。":
+    "A natural next step is a loan-month panel that treats default and prepayment as competing risks and conditions on house-price and rate paths, turning the point-in-time PD into a lifetime PD usable for CECL and stress testing.",
+
   // ── 通用 UI ─────────────────────────────────────────────────────
   "返回首页": "Back to home",
   "项目未找到": "Project not found",
