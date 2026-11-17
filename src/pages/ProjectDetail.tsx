@@ -56,7 +56,7 @@ const projectData: Record<string, ProjectConfig> = {
   },
   task7: {
     title: "基于 LightGBM 的房贷违约预测",
-    order: 6,
+    order: 1,
     description: [
       "用 Freddie Mac 2015–2023 年发放的 41 万笔房贷数据，训练带单调约束的 LightGBM，在贷款收购时预测其两年内严重违约的概率。模型只用发放时的信息，在 2015–18 年的数据上训练，在 2021–23 年的数据上做一次样本外测试，并与 FICO × LTV 定价网格、Logistic 评分卡和 XGBoost 对比。",
     ],

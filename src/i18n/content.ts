@@ -31,6 +31,8 @@ export type SiteContent = {
   workflowTitle: string;
   workflowIntro: string;
   stages: StageContent[];
+  mlHeading: string;
+  mlProjects: CardContent[];
   strategyHeading: string;
   analysisHeading: string;
   viewDetail: string;
@@ -118,6 +120,16 @@ const zh: SiteContent = {
       ],
     },
   ],
+  mlHeading: "机器学习应用",
+  mlProjects: [
+    {
+      id: "task7",
+      title: "基于 LightGBM 的房贷违约预测",
+      summary:
+        "用 41 万笔 Freddie Mac 房贷数据训练带单调约束的 LightGBM，样本外对比定价网格、Logistic 评分卡与 XGBoost",
+      tags: ["LightGBM", "信用风险", "单调约束", "SHAP", "样本外检验"],
+    },
+  ],
   strategyHeading: "策略分析",
   analysisHeading: "分析结果",
   viewDetail: "查看详情",
@@ -161,13 +173,6 @@ const zh: SiteContent = {
       summary:
         "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
       tags: ["几何布朗运动", "Heston模型", "敏感性测试"],
-    },
-    {
-      id: "task7",
-      title: "基于 LightGBM 的房贷违约预测",
-      summary:
-        "用 41 万笔 Freddie Mac 房贷数据训练带单调约束的 LightGBM，样本外对比定价网格、Logistic 评分卡与 XGBoost",
-      tags: ["LightGBM", "信用风险", "单调约束", "SHAP", "样本外检验"],
     },
   ],
   disclaimer:
@@ -278,6 +283,16 @@ const en: SiteContent = {
       ],
     },
   ],
+  mlHeading: "Machine Learning Applications",
+  mlProjects: [
+    {
+      id: "task7",
+      title: "LightGBM for Mortgage Default Prediction",
+      summary:
+        "A monotone-constrained LightGBM trained on 410,630 Freddie Mac mortgages, benchmarked out of time against a pricing grid, a logistic scorecard and XGBoost",
+      tags: ["LightGBM", "Credit Risk", "Monotone Constraints", "SHAP", "Out-of-Time Testing"],
+    },
+  ],
   strategyHeading: "Strategy Research",
   analysisHeading: "Quantitative Analysis",
   viewDetail: "View details",
@@ -323,13 +338,6 @@ const en: SiteContent = {
       summary:
         "GBM path simulation of AAPL at varying frequencies, plus Heston path simulation and sensitivity testing",
       tags: ["Geometric Brownian Motion", "Heston Model", "Sensitivity Testing"],
-    },
-    {
-      id: "task7",
-      title: "LightGBM for Mortgage Default Prediction",
-      summary:
-        "A monotone-constrained LightGBM trained on 410,630 Freddie Mac mortgages, benchmarked out of time against a pricing grid, a logistic scorecard and XGBoost",
-      tags: ["LightGBM", "Credit Risk", "Monotone Constraints", "SHAP", "Out-of-Time Testing"],
     },
   ],
   disclaimer:

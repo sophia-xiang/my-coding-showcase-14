@@ -91,8 +91,21 @@ const Index = () => {
       {/* AI 投研工作流 */}
       <AIWorkflow />
 
-      {/* 策略分析 + 分析结果 */}
+      {/* 机器学习应用 + 策略分析 + 分析结果 */}
       <section className="w-full px-6 md:px-8 py-16 bg-background">
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-xl font-semibold mb-6 text-foreground"
+        >
+          {t.mlHeading}
+        </motion.h2>
+
+        <motion.div className="grid gap-5 md:grid-cols-3 mb-12">
+          {t.mlProjects.map((card, i) => renderCard(card, i, 0.15 + i * 0.1))}
+        </motion.div>
+
         <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
