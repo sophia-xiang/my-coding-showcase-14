@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Task5Strategy from "./Task5Strategy";
 import Task7LightGBM from "./Task7LightGBM";
+import Task8LoanPricing from "./Task8LoanPricing";
 import { useLang } from "@/i18n/LanguageContext";
 
 type ProjectConfig = {
@@ -59,6 +60,13 @@ const projectData: Record<string, ProjectConfig> = {
     order: 1,
     description: [
       "用 Freddie Mac 2015–2023 年发放的 41 万笔房贷数据，训练带单调约束的 LightGBM，在贷款收购时预测其两年内严重违约的概率。模型只用发放时的信息，在 2015–18 年的数据上训练，在 2021–23 年的数据上做一次样本外测试，并与 FICO × LTV 定价网格、Logistic 评分卡和 XGBoost 对比。",
+    ],
+  },
+  task8: {
+    title: "车贷与房贷的风险定价",
+    order: 6,
+    description: [
+      "FINA 6492 的两份课程练习，贷款参数由课程给定。第一部分为 60 个月车贷做风险定价，把违约、回收和服务成本拆进现金流，求出盈亏平衡利率并按客群分层定价；第二部分为 30 年期房贷建立提前还款模型，计算 WAL、有效久期和凸性，并用蒙特卡洛估计提前还款期权的成本。",
     ],
   },
 };
@@ -1538,6 +1546,17 @@ const ProjectDetail = () => {
   if (id === "task7") {
     return (
       <Task7LightGBM
+        order={project.order}
+        title={tr(project.title)}
+        description={tr(project.description[0])}
+      />
+    );
+  }
+
+  // task8：车贷与房贷的风险定价（FINA 6492 第 4 周课程练习）
+  if (id === "task8") {
+    return (
+      <Task8LoanPricing
         order={project.order}
         title={tr(project.title)}
         description={tr(project.description[0])}

@@ -174,6 +174,12 @@ const zh: SiteContent = {
         "通过GBM模型对不同频率的AAPL股票进行路径模拟，以及用Heston模型进行路径模拟和敏感性测试",
       tags: ["几何布朗运动", "Heston模型", "敏感性测试"],
     },
+    {
+      id: "task8",
+      title: "车贷与房贷的风险定价",
+      summary: "为车贷拆解盈亏平衡利率并按客群定价，为房贷建模提前还款、负凸性与期权调整利差",
+      tags: ["信用定价", "违约强度", "提前还款", "负凸性", "蒙特卡洛"],
+    },
   ],
   disclaimer:
     "本站内容仅为个人研究与技术能力展示，不构成任何投资建议或证券推荐。文中出现的证券代码仅作为量化模型的演示样本。",
@@ -338,6 +344,13 @@ const en: SiteContent = {
       summary:
         "GBM path simulation of AAPL at varying frequencies, plus Heston path simulation and sensitivity testing",
       tags: ["Geometric Brownian Motion", "Heston Model", "Sensitivity Testing"],
+    },
+    {
+      id: "task8",
+      title: "Risk-Based Pricing of Auto Loans and Mortgages",
+      summary:
+        "Decomposing the break-even rate of an auto loan and pricing it by segment, and modelling mortgage prepayment, negative convexity and the option-adjusted spread",
+      tags: ["Credit Pricing", "Hazard Rate", "Prepayment", "Negative Convexity", "Monte Carlo"],
     },
   ],
   disclaimer:

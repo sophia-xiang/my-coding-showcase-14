@@ -21,6 +21,7 @@ const colorById: Record<string, string> = {
   task4: tagPalettes[0],
   task6: tagPalettes[2],
   task7: tagPalettes[1],
+  task8: tagPalettes[1],
 };
 
 const Index = () => {

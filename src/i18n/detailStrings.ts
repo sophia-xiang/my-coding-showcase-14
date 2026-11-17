@@ -516,6 +516,133 @@ export const detailStrings: Record<string, string> = {
   "下一步可以改用贷款–月度面板，把违约和提前还款作为竞争风险建模，并加入房价和利率路径，把时点 PD 扩展为可用于 CECL 和压力测试的全周期 PD。":
     "A natural next step is a loan-month panel that treats default and prepayment as competing risks and conditions on house-price and rate paths, turning the point-in-time PD into a lifetime PD usable for CECL and stress testing.",
 
+  // ── task8：车贷与房贷的风险定价 ───────────────────────────────────
+  "车贷与房贷的风险定价": "Risk-Based Pricing of Auto Loans and Mortgages",
+  "FINA 6492 的两份课程练习，贷款参数由课程给定。第一部分为 60 个月车贷做风险定价，把违约、回收和服务成本拆进现金流，求出盈亏平衡利率并按客群分层定价；第二部分为 30 年期房贷建立提前还款模型，计算 WAL、有效久期和凸性，并用蒙特卡洛估计提前还款期权的成本。":
+    "Two FINA 6492 course exercises, with loan parameters set by the course. Part 1 prices a 60-month auto loan for credit risk, building default, recovery and servicing costs into the cash flows to find the break-even rate and price by borrower segment. Part 2 builds a prepayment model for a 30-year mortgage, computes WAL, effective duration and convexity, and uses Monte Carlo to estimate the cost of the prepayment option.",
+
+  "车贷盈亏平衡利率": "Auto-loan break-even rate",
+  "合同利率 9%，安全边际 173bp": "Contract rate 9%, margin 173bp",
+  "每笔车贷的 NPV": "NPV per auto loan",
+  "放款 25,000，风险现值 26,023": "Lent 25,000, risky PV 26,023",
+  "利率下降 150bp 时房贷的涨幅": "Mortgage price gain when rates fall 150bp",
+  "不可提前还款的债券 +17.74": "Non-prepayable bond +17.74",
+  "提前还款期权的时间价值": "Time value of the prepayment option",
+  "每 100 元面值，OAS −19.9bp": "Per 100 of face, OAS −19.9bp",
+
+  "第一部分：车贷的风险定价": "Part 1: Risk-Based Pricing of an Auto Loan",
+  "贷款设定与盈亏平衡利率": "Loan Setup and Break-Even Rate",
+  "贷款条款": "Loan terms",
+  "本金 25,000，期限 60 个月，合同年利率 9%，等额本息月供 518.96":
+    "Principal 25,000, 60-month term, 9% contract APR, level monthly payment 518.96",
+  "违约假设": "Default",
+  "月违约强度 0.25%（年 PD 约 3.0%，60 个月累计 13.9%）":
+    "Monthly hazard 0.25% (annual PD about 3.0%, 13.9% cumulative over 60 months)",
+  "回收与成本": "Recovery and costs",
+  "回收率 55%，资金成本年化 5.40%，服务成本年化 0.50%":
+    "55% recovery, 5.40% annual funding cost, 0.50% annual servicing cost",
+  "验证方法": "Validation",
+  "解析现值，加上 100 万个模拟借款人的蒙特卡洛": "Analytic PV, plus a Monte Carlo of one million simulated borrowers",
+  "组成部分": "Component",
+  "年化": "Annual",
+  "资金成本": "Funding cost",
+  "+ 信用利差（PD × LGD）": "+ Credit spread (PD × LGD)",
+  "+ 服务成本": "+ Servicing cost",
+  "= 盈亏平衡利率": "= Break-even rate",
+  "合同利率": "Contract rate",
+  "安全边际": "Margin",
+  "车贷的摊还与存活概率、预期现金流构成、单笔贷款现值的蒙特卡洛分布":
+    "Auto-loan amortisation and survival, expected cash-flow composition, and the Monte Carlo distribution of a single loan's PV",
+  "按违约概率加权预期现金流后，这笔贷款的风险现值为 26,023，高于放款的 25,000，NPV 为 +1,023，相当于每 100 元本金值 104.09。违约的现值成本为 916，服务成本为 296。":
+    "Weighting expected cash flows by default probability gives a risky value of 26,023 against 25,000 lent: an NPV of +1,023, or 104.09 per 100 of principal. Default costs 916 in present value and servicing another 296.",
+  "100 万个模拟借款人的平均现值为 26,024 ± 5，与解析结果一致。但单笔贷款中有 11.7% 是亏钱的，价值是组合层面的属性，单笔贷款更接近一次二元押注。":
+    "One million simulated borrowers average 26,024 ± 5, matching the analytic value. Yet 11.7% of individual loans lose money: value is a portfolio property, and a single loan is close to a binary bet.",
+
+  "敏感性分析": "Sensitivity Analysis",
+  "情景": "Scenario",
+  "9% 利率下的 NPV": "NPV at 9%",
+  "NPV 变化": "Change in NPV",
+  "盈亏平衡利率": "Break-even rate",
+  "利率变化（bp）": "Change in rate (bp)",
+  "基准情景": "Base case",
+  "违约强度 × 2": "Hazard × 2",
+  "违约强度 × 0.5": "Hazard × 0.5",
+  "回收率 35%": "Recovery 35%",
+  "回收率 75%": "Recovery 75%",
+  "资金成本 +100bp": "Funding +100bp",
+  "服务成本 1.0%": "Servicing 1.0%",
+  "违约强度 × 2 且回收率 35%": "Hazard × 2 and recovery 35%",
+  "不同回收率下贷款人 NPV 随违约概率的变化，以及盈亏平衡利率网格":
+    "Lender NPV against default probability at different recovery rates, and the break-even rate grid",
+  "违约风险是最主要的敏感因素。违约强度翻倍，NPV 减少 819，盈亏平衡利率上升 137bp；回收率上下变动 20 个百分点，NPV 变化 355；资金成本则一比一传导到盈亏平衡利率。":
+    "Default risk is the main sensitivity. Doubling the hazard cuts NPV by 819 and raises the break-even rate by 137bp; moving recovery 20 points either way shifts NPV by 355; funding cost passes through to the break-even rate one for one.",
+  "违约强度翻倍、同时回收率降到 35% 时，NPV 转为 −471，盈亏平衡利率升到 9.84%，超过了 9% 的合同利率。":
+    "With the hazard doubled and recovery cut to 35%, NPV turns negative at −471 and the break-even rate rises to 9.84%, above the 9% contract rate.",
+
+  "按客群的风险定价": "Risk-Based Pricing by Segment",
+  "客群": "Segment",
+  "年 PD": "Annual PD",
+  "含资本成本的要求利率": "Required rate incl. capital",
+  "超优质": "Super-prime",
+  "优质": "Prime",
+  "次优（基准）": "Near-prime (base)",
+  "次级": "Subprime",
+  "深度次级": "Deep subprime",
+  "统一按 9% 定价时，从超优质到次优客群都盈利；次级客群要 9.85% 才能保本，再加上 12% 门槛收益率的资本成本，需要 11.05%。":
+    "At a flat 9%, every segment from super-prime to near-prime is profitable. Subprime breaks even only at 9.85%, and needs 11.05% once a capital charge at a 12% hurdle rate is added.",
+  "如果所有人都用同一个利率，低风险客户就是在补贴高风险客户，最终低风险客户流失、高风险客户留下。这就是逆向选择，也是风险定价要解决的问题。":
+    "One rate for everyone makes safe borrowers subsidise risky ones; the safe ones leave and the risky ones stay. That is adverse selection, and it is what risk-based pricing exists to prevent.",
+  "模型的简化之处在于违约强度设为常数，而实际违约多集中在前期余额最高的时候；没有考虑提前还款；回收率固定，而二手车价格恰恰会在违约上升的经济下行期下跌。":
+    "The model's simplifications: the hazard is constant, whereas real defaults cluster early when balances are highest; prepayment is ignored; and recovery is fixed, although used-car prices fall in exactly the downturns that raise default.",
+
+  "第二部分：房贷的提前还款与负凸性": "Part 2: Mortgage Prepayment and Negative Convexity",
+  "贷款设定与利率情景": "Loan Setup and Rate Scenarios",
+  "本金 400,000，30 年期，票面利率 6.50%，月供 2,528.27，发放时 LTV 80%":
+    "Principal 400,000, 30-year term, 6.50% note rate, monthly payment 2,528.27, 80% LTV at origination",
+  "提前还款模型": "Prepayment model",
+  "基础 CPR 6%，再融资激励超过成本门槛（均值 50bp）后加速，并考虑账龄和 LTV":
+    "6% base CPR, accelerating once the refinancing incentive clears a cost threshold (50bp on average), with seasoning and LTV effects",
+  "估值方法": "Valuation",
+  "按情景利率路径折现，再用蒙特卡洛模拟均值回归的对数正态利率，求出 OAS":
+    "Discounting along scenario rate paths, then a Monte Carlo of mean-reverting lognormal rates to solve for the OAS",
+  "房贷价格": "Mortgage price",
+  "不可提前还款债券": "Non-prepayable bond",
+  "WAL（年）": "WAL (years)",
+  "有效久期": "Effective duration",
+  "有效凸性": "Effective convexity",
+  "基准（利率维持 6.50%）": "Base (rates stay at 6.50%)",
+  "利率立即下降 150bp": "Rates fall 150bp at once",
+  "利率立即上升 100bp": "Rates rise 100bp at once",
+  "不同利率情景下的提前还款速度、剩余本金，以及蒙特卡洛价格分布":
+    "Prepayment speed and outstanding balance by rate scenario, and the Monte Carlo price distribution",
+  "在当前利率下，房贷按面值定价，但基准提前还款（前 5 年 CPR 4.7%）把 WAL 从 19.6 年缩短到 11.1 年，有效久期从 10.4 降到 7.0。":
+    "At today's rate the mortgage prices at par, but baseline prepayment (4.7% CPR in years 1–5) cuts the WAL from 19.6 to 11.1 years and the effective duration from 10.4 to 7.0.",
+  "利率下降 150bp 会把 CPR 推到 19.7%，前 5 年就还掉 65% 的本金，WAL 缩短到 4.3 年。房贷只涨 5.33 点，而同等不可提前还款的债券涨 17.74 点。":
+    "A 150bp drop lifts CPR to 19.7% and repays 65% of the principal within five years, shortening the WAL to 4.3 years. The mortgage gains only 5.33 points, while an equivalent non-prepayable bond gains 17.74.",
+
+  "负凸性：贷款人卖出了一份看涨期权": "Negative Convexity: The Lender Is Short a Call",
+  "房贷与不可提前还款债券的价格–利率曲线，以及有效久期和凸性随利率的变化":
+    "Price–yield curves of the mortgage and a non-prepayable bond, and effective duration and convexity across rates",
+  "高票息的现金流恰好在最值钱的时候被按面值提前还回，贷款人相当于向借款人卖出了一份看涨期权。利率从 6.50% 降到 5.00%，久期从 7.0 塌缩到 0.5；凸性在利率约 5.90% 时达到 −878。":
+    "High-coupon cash flows come back at par exactly when they are worth the most, so the lender is effectively short a call sold to the borrower. As rates fall from 6.50% to 5.00%, duration collapses from 7.0 to 0.5, and convexity reaches −878 at a rate of about 5.90%.",
+  "涨跌因此不对称。利率下降 150bp 赚 5.33 点，上升 100bp 亏 6.65 点；同等的普通债券则是赚 17.74、亏 9.60。":
+    "Moves are therefore asymmetric: −150bp earns 5.33 points and +100bp costs 6.65, whereas the equivalent plain bond earns 17.74 and loses 9.60.",
+
+  "期权成本与再融资速度": "Option Cost and Refinancing Speed",
+  "蒙特卡洛估值（每 100 元面值）": "Monte Carlo valuation (per 100 of face)",
+  "静态价格（利率维持 6.50%）": "Static price (rates stay at 6.50%)",
+  "蒙特卡洛价格": "Monte Carlo price",
+  "利率下降 150bp 时的房贷价格": "Mortgage price after a 150bp rate drop",
+  "基准": "Base",
+  "再融资速度减半": "Refinancing speed halved",
+  "再融资速度翻倍": "Refinancing speed doubled",
+  "再融资成本升到 100bp": "Refinancing cost raised to 100bp",
+  "房价下跌 20%（LTV 100%）": "House prices −20% (LTV 100%)",
+  "即使预期利率不变，利率波动本身也有成本。在模拟利率路径下房贷值 98.88，比静态价格低 1.12 点，这就是提前还款期权的时间价值。折算成 OAS 约为 −20bp，也就是说 6.50% 的票息还需要再高约 20bp，才能覆盖这份期权。":
+    "Volatility is costly even when expected rates do not move. Along simulated rate paths the mortgage is worth 98.88, 1.12 points below the static price: the time value of the prepayment option. In spread terms the OAS is about −20bp, so the 6.50% coupon needs roughly 20bp more to pay for the option.",
+  "最关键的敏感因素是借款人再融资的速度。房价下跌 20% 后 LTV 升到 100%，借款人无法再融资，利率下降 150bp 时价格反而多涨 2.20 点，WAL 从 4.3 年延长到 6.2 年。":
+    "The key sensitivity is how fast borrowers refinance. After a 20% house-price fall, LTV rises to 100% and borrowers are locked out of refinancing, so at −150bp the price rises a further 2.20 points and the WAL extends from 4.3 to 6.2 years.",
+
   // ── 通用 UI ─────────────────────────────────────────────────────
   "返回首页": "Back to home",
   "项目未找到": "Project not found",
